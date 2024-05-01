@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Members = require("../models/model");
+const config = require("../config/index");
 
 // 회원가입 컨트롤러 라우터로 보냄
 exports.signup = async (req, res, next) => {
@@ -19,14 +20,9 @@ exports.signup = async (req, res, next) => {
       password: hashedPassword,
     });
 
-    // json web token
-    const token = jwt.sign({ _id: newMember._id }, "secretkey123", {
-      expiresIn: "30d",
-    });
-
     res
       .status(201)
-      .json({ status: "success", message: "회원가입 성공", token });
+      .json({ status: "success", message: "회원가입 성공", });
   } catch (error) {
     next(error);
   }
@@ -54,8 +50,8 @@ exports.login = async (req, res, next) => {
     }
 
     // json web token
-    const token = jwt.sign({ _id: member._id }, "secretkey123", {
-      expiresIn: "30d",
+    const token = jwt.sign({ _id: member._id }, config.jwt, {
+      expiresIn: "1d",
     });
 
     res.status(201).json({

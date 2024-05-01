@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
+const jwt = process.env.JWT;
 const port = process.env.PORT ?? 4040;
 
 if (process.env.MONGODB_URI === null || process.env.MONGODB_URI === undefined) {
@@ -11,4 +12,5 @@ module.exports = {
   applicationName: "회원가입 API",
   port: port,
   mongoDBURI: process.env.MONGODB_URI,
+  jwt: jwt,
 };
