@@ -57,9 +57,28 @@ exports.login = async (req, res, next) => {
     res.status(200).json({
       status: "success",
       message: "로그인 성공",
-      token,
+      token,      
     });
   } catch (error) {
     next(error);
   }
 };
+
+// 사용자 조회 컨트롤러 라우터로 보냄
+exports.users = async (req, res, next) => {
+  try {
+    const members = await Members.find({});
+
+    if (members === null || members === undefined) {
+      return res
+        .status(200)
+        .json({ status: "null", message: "사용자가 없습니다" });
+    }
+
+    res.status(200).json(members);
+
+  } catch (error) {
+    next(error);
+  }
+};
+
