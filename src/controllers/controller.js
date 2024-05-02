@@ -64,7 +64,7 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// 사용자 조회 컨트롤러 라우터로 보냄
+// 사용자 목록 가져오기 컨트롤러 라우터로 보냄
 exports.users = async (req, res, next) => {
   try {
     const members = await Members.find({});
