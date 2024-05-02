@@ -1,9 +1,6 @@
-import { ProjectModel } from "../schemas/project";
+const ProjectModel = require("../schemas/project");
 
 class Project {
-  // 1. 새로운 객체를 인자로 받아 생성
-  // 2. model을 사용하여 db에 새로운 프로젝트 데이터 저장
-  // 3. 그 데이터를 반환
   static async create(newProject) {
     return await ProjectModel.create(newProject);
   }
@@ -29,8 +26,7 @@ class Project {
     return updatedProject;
   }
 
-
 }
 
-export { Project };
+module.exports =  Project;
 
