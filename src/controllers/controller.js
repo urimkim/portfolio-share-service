@@ -71,8 +71,8 @@ exports.users = async (req, res, next) => {
 
     if (members === null || members === undefined) {
       return res
-        .status(200)
-        .json({ status: "null", message: "사용자가 없습니다" });
+        .status(400)
+        .json({ status: "null", error: "사용자가 없습니다" });
     }
 
     res.status(200).json(members);
@@ -82,3 +82,23 @@ exports.users = async (req, res, next) => {
   }
 };
 
+// 특정 사용자 조회해서 가져오기 컨트롤러 라우터로 보냄
+exports.user = async (req, res, next) => {
+  try {
+    const { name } = req.params;
+    const user = await Members.findOne({ name });
+
+    if (!user) {
+      return res.status(400).json({ error: "해당 사용자가 없습니다"});
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "조회 성공",
+      user, 
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
