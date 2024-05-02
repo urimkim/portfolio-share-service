@@ -54,7 +54,7 @@ exports.login = async (req, res, next) => {
       expiresIn: "1d",
     });
 
-    res.status(201).json({
+    res.status(200).json({
       status: "success",
       message: "로그인 성공",
       token,
