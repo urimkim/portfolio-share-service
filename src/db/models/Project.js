@@ -1,4 +1,4 @@
-const ProjectModel = require("../schemas/project");
+const {ProjectModel} = require("../schemas/project");
 
 class Project {
   static async create(newProject) {
@@ -28,5 +28,5 @@ class Project {
 
 }
 
-module.exports =  Project;
+module.exports = {Project};
 

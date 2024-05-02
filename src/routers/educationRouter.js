@@ -1,10 +1,7 @@
-const is = require('@sindresorhus/is');
 const { Router } = require('express');
-const { login_required } = require('../middlewares/login_required');
 const { EducationService } = require('../services/educationService');
 
 const educationRouter = Router();
-educationRouter.use(login_required);
 
 educationRouter.post('/education/create', async function (req, res, next) {
   try {
@@ -93,4 +90,4 @@ educationRouter.get('/educationlist/:user_id', async function (req, res, next) {
   }
 });
 
-module.exports =  educationRouter;
+module.exports =  {educationRouter};

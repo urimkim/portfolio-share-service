@@ -28,5 +28,5 @@ class Education {
 
 }
 
-module.exports =  Education;
+module.exports =  {Education};
 

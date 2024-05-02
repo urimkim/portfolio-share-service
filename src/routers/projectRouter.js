@@ -1,10 +1,7 @@
-const is = require('@sindresorhus/is');
 const { Router } = require('express');
-const { login_required } = require('../middlewares/login_required');
 const { ProjectService } = require('../services/projectService');
 
 const projectRouter = Router();
-projectRouter.use(login_required);
 
 projectRouter.post('/project/create', async function (req, res, next) {
   try {
@@ -93,4 +90,4 @@ projectRouter.get('/projcetlist/:user_id', async function (req, res, next) {
   }
 });
 
-module.exports =  projectRouter;
+module.exports =  { projectRouter };
