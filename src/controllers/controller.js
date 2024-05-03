@@ -31,9 +31,9 @@ exports.signup = async (req, res, next) => {
 // 로그인 컨트롤러 라우터로 보냄
 exports.login = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { email, password } = req.body;
 
-    const member = await Members.findOne({ name, email });
+    const member = await Members.findOne({ email });
 
     if (!member) {
       return res
