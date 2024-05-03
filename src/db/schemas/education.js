@@ -1,12 +1,12 @@
 const { Schema, model } = require("mongoose");
 
-const EducationSchema = new Schema(
+const EduSchema = new Schema(
   {
     id: {
       type: String,
       required: true,
     },
-    user_id: {
+    userId: {
       type: String,
       required: true,
     },
@@ -20,7 +20,7 @@ const EducationSchema = new Schema(
     },
     status: {
       type: String,
-      required: false,
+      required: true,
     },
   },
   {
@@ -28,5 +28,5 @@ const EducationSchema = new Schema(
   }
 );
 
-const EducationModel = model("Education", EducationSchema);
+const EducationModel = model("Education", EduSchema);
 module.exports =  {EducationModel};

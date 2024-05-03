@@ -1,23 +1,16 @@
 const { Router } = require('express');
-const { EducationService } = require('../services/educationService');
+const { Education } = require("../db/models/Education");
+const { v4: uuidv4 } = require("uuid");
 
 const educationRouter = Router();
 
-educationRouter.post('/education/create', async function (req, res, next) {
+educationRouter.post("/educations", async function (req, res, next) {
   try {
-    if (is.emptyObject(req.body)) {
-      throw new Error(
-        'headers의 Content-Type을 application/json으로 설정해주세요',
-      );
-    }
+    const { userId, school, major, status } = req.body;
 
-    const user_id = req.body.user_id;
-    const school = req.body.school;
-    const major = req.body.major;
-    const status = req.body.status;
-
-    const newEducation = await EducationService.addEducation({
-      user_id,
+    const newEducation = await Education.create({
+      id: uuidv4(), // 새로운 UUID 생성
+      userId,
       school,
       major,
       status,
@@ -29,65 +22,53 @@ educationRouter.post('/education/create', async function (req, res, next) {
   }
 });
 
-educationRouter.get('/eduactions/:id', async function (req, res, next) {
+educationRouter.get('/educations/:userId', async function (req, res, next) {
   try {
-    const educationId = req.params.id;
-    const education = await EducationService.getEducation({ educationId });
+    const userId = req.params.userId;
+    
+    const educations = await Education.findByUserId({ userId });
 
-    if (education.errorMessage) {
-      throw new Error(education.errorMessage);
-    }
-
-    res.status(200).send(education);
+    res.status(200).json(educations);
   } catch (error) {
     next(error);
   }
 });
 
-educationRouter.put('/educations/:id', async function (req, res, next) {
+educationRouter.put('/educations/:userId', async function (req, res, next) {
   try {
-    const educationId = req.params.id;
+    const userId = req.params.userId;
+    const { school, major, status } = req.body;
 
-    const school = req.body.school ?? null;
-    const major = req.body.major ?? null;
-    const status = req.body.status ?? null;
+    const toUpdate = {};
+    if (school) toUpdate.school = school;
+    if (major) toUpdate.major = major;
+    if (status) toUpdate.status = status;
 
-    const toUpdate = { school, major, status };
-    const education = await EducationService.setEducation({ educationId, toUpdate });
+    // 학력 업데이트
+    const updatedEducation = await Education.update({
+      userId,
+      toUpdate,
+    });
 
-    if (education.errorMessage) {
-      throw new Error(education.errorMessage);
-    }
-
-    res.status(200).send(education);
+    // 업데이트된 학력을 응답으로 전송
+    res.status(200).json(updatedEducation);
   } catch (error) {
     next(error);
   }
 });
 
-educationRouter.delete('/eduactions/:id', async function (req, res, next) {
+educationRouter.delete('/educations/:userId', async function (req, res, next) {
   try {
-    const educationId = req.params.id;
-    const result = await EducationService.deleteEducation({ educationId });
+    const userId = req.params.userId;
+    // 학력 삭제
+    const result = await Education.deleteById({ userId });
 
-    if (result.errorMessage) {
-      throw new Error(result.errorMessage);
-    }
-
-    res.status(200).send(result);
+    // 삭제 결과를 응답으로 전송
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }
 });
 
-educationRouter.get('/educationlist/:user_id', async function (req, res, next) {
-  try {
-    const user_id = req.params.user_id;
-    const educationList = await EducationService.getEducationList({ user_id });
-    res.status(200).send(educationList);
-  } catch (error) {
-    next(error);
-  }
-});
 
-module.exports =  {educationRouter};
+module.exports =  { educationRouter };

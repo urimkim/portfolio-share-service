@@ -1,93 +1,85 @@
-const { Router } = require('express');
-const { ProjectService } = require('../services/projectService');
+const { Router } = require("express");
+const { Project } = require("../db");
+const { v4: uuidv4 } = require("uuid");
 
 const projectRouter = Router();
 
-projectRouter.post('/project/create', async function (req, res, next) {
+projectRouter.post("/projects", async function (req, res, next) {
   try {
-    if (is.emptyObject(req.body)) {
-      throw new Error(
-        'headers의 Content-Type을 application/json으로 설정해주세요',
-      );
-    }
-
-    const user_id = req.body.user_id;
-    const title = req.body.title;
-    const content = req.body.content;
-
-    const newProject = await ProjectService.addProject({
-      user_id,
+    const { userId, title, content } = req.body;
+    
+    const newProject = await Project.create({
+      id: uuidv4(), // 새로운 UUID 생성
+      userId,
       title,
       content,
     });
 
+    // 생성된 프로젝트를 응답으로 전송
     res.status(201).json(newProject);
   } catch (error) {
     next(error);
   }
 });
 
-projectRouter.get('/projects/:id', async function (req, res, next) {
+
+// 특정 사용자의 모든 프로젝트 조회
+projectRouter.get("/projects/:userId", async function (req, res, next) {
   try {
-    const projectId = req.params.id;
+    // 요청에서 userId 추출
+    const userId = req.params.userId;
 
-    const project = await ProjectService.getProject({ projectId });
+    // 해당 사용자의 모든 프로젝트를 조회
+    const projects = await Project.findByUserId({ userId });
 
-    if (project.errorMessage) {
-      throw new Error(project.errorMessage);
-    }
-
-    res.status(200).send(projcet);
+    // 조회된 프로젝트를 응답으로 전송
+    res.status(200).json(projects);
   } catch (error) {
     next(error);
   }
 });
 
-projectRouter.put('/projects/:id', async function (req, res, next) {
+// 특정 프로젝트 수정
+projectRouter.put("/projects/:userId", async function (req, res, next) {
   try {
-    const projectId = req.params.id;
+    // 요청에서 userId 추출
+    const userId = req.params.userId;
 
-    const title = req.body.title ?? null;
-    const content = req.body.content ?? null;
+    // 요청 본문에서 수정할 데이터 추출
+    const { title, content } = req.body;
 
-    const toUpdate = { title, content };
+    // 수정할 필드와 값을 설정
+    const toUpdate = {};
+    if (title) toUpdate.title = title;
+    if (content) toUpdate.content = content;
 
-    const project = await ProjcetService.setProject({ projectId, toUpdate });
+    // 프로젝트 업데이트
+    const updatedProject = await Project.update({
+      userId,
+      toUpdate,
+    });
 
-    if (project.errorMessage) {
-      throw new Error(award.errorMessage);
-    }
-
-    res.status(200).send(project);
+    // 업데이트된 프로젝트를 응답으로 전송
+    res.status(200).json(updatedProject);
   } catch (error) {
     next(error);
   }
 });
 
-projectRouter.delete('/projects/:id', async function (req, res, next) {
+// 특정 프로젝트 삭제
+projectRouter.delete("/projects/:userId", async function (req, res, next) {
   try {
-    const projectId = req.params.id;
+    // 요청에서 projectId 추출
+    const userId = req.params.userId;
 
-    const result = await ProjcetService.deleteProjcet({ projcetId });
+    // 프로젝트 삭제
+    const result = await Project.deleteById({ userId });
 
-    if (result.errorMessage) {
-      throw new Error(result.errorMessage);
-    }
-
-    res.status(200).send(result);
+    // 삭제 결과를 응답으로 전송
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }
 });
 
-projectRouter.get('/projcetlist/:user_id', async function (req, res, next) {
-  try {
-    const user_id = req.params.user_id;
-    const projcetList = await ProjcetService.getProjcetList({ user_id });
-    res.status(200).send(projcetList);
-  } catch (error) {
-    next(error);
-  }
-});
-
-module.exports =  { projectRouter };
+module.exports = { projectRouter };

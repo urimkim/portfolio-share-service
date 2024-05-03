@@ -1,12 +1,12 @@
 const { Schema, model } = require("mongoose");
 
-const ProjectSchema = new Schema(
+const ProSchema = new Schema(
   {
     id: {
       type: String,
       required: true,
     },
-    user_id: {
+    userId: {
       type: String,
       required: true,
     },
@@ -24,5 +24,5 @@ const ProjectSchema = new Schema(
   }
 );
 
-const ProjectModel = model("Project", ProjectSchema);
+const ProjectModel = model("Project", ProSchema);
 module.exports =  {ProjectModel};

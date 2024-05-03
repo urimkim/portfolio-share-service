@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 const { Education } = require("./models/Education");
 const { Project } = require("./models/Project");
+require('dotenv').config();
 
-const DB_URL =
-  process.env.MONGODB_URL ||
-  "MongoDB 서버 주소가 설정되지 않았습니다.\n./db/index.ts 파일을 확인해 주세요.";
+console.log(process.env.MONGODB_URL);
+const DB_URL = process.env.MONGODB_URL || "MongoDB 서버 주소가 설정되지 않았습니다.\n./db/index.ts 파일을 확인해 주세요.";
 
 mongoose.connect(DB_URL);
 const db = mongoose.connection;
