@@ -9,7 +9,7 @@ educationRouter.post("/educations", async function (req, res, next) {
     const { userId, school, major, status } = req.body;
 
     const newEducation = await Education.create({
-      id: uuidv4(), // 새로운 UUID 생성
+      id: uuidv4(), 
       userId,
       school,
       major,
@@ -44,13 +44,11 @@ educationRouter.put('/educations/:userId', async function (req, res, next) {
     if (major) toUpdate.major = major;
     if (status) toUpdate.status = status;
 
-    // 학력 업데이트
     const updatedEducation = await Education.update({
       userId,
       toUpdate,
     });
 
-    // 업데이트된 학력을 응답으로 전송
     res.status(200).json(updatedEducation);
   } catch (error) {
     next(error);
@@ -60,15 +58,12 @@ educationRouter.put('/educations/:userId', async function (req, res, next) {
 educationRouter.delete('/educations/:userId', async function (req, res, next) {
   try {
     const userId = req.params.userId;
-    // 학력 삭제
     const result = await Education.deleteById({ userId });
 
-    // 삭제 결과를 응답으로 전송
     res.status(200).json(result);
   } catch (error) {
     next(error);
   }
 });
-
 
 module.exports =  { educationRouter };
