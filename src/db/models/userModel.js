@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
-const { v4: uuidv4 } = require("uuid");
+const crypto = require("crypto");
 const { Schema } = require("mongoose");
 
-// const id = uuidv4();
+const id = crypto.randomUUID();
 
 const UserSchema = new Schema({
   id: {
     type: String,
-    default: uuidv4,
+    default: () => crypto.randomUUID(),
     required: true,
   },
   name: {
