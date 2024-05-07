@@ -1,13 +1,10 @@
 const mongoose = require("mongoose");
-const { v4: uuidv4 } = require("uuid");
 const { Schema } = require("mongoose");
 
-// const id = uuidv4();
-
-const UserSchema = new Schema({
+const CertificationSchema = new Schema({
   id: {
     type: String,
-    default: uuidv4,
+    default: () => crypto.randomUUID(),
     required: true,
   },
   name: {
@@ -19,11 +16,11 @@ const UserSchema = new Schema({
     unique: true,
     required: true
   },
-  password: {
+  title: {
     type: String,
     required: true
   },
-  description: {
+  contents: {
     type: String,
     default: "설명이 없습니다. 추가해 주세요",
   },
@@ -32,6 +29,6 @@ const UserSchema = new Schema({
   }
 );
 
-const Members = mongoose.model("members", UserSchema);
+const Certificates = mongoose.model("Certificate", CertificationSchema);
 
-module.exports = Members;
+module.exports = Certificates;
