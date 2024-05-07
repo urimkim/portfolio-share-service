@@ -1,10 +1,11 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Members = require("../db/models/userModel");
+const Award = require("../db/models/Award");
+const Certificate = require("../db/models/Certificate");
+const Education = require("../db/models/Education");
+const Project = require("../db/models/Project");
 const config = require("../config");
-
-const Awards = require("../db/models/_awardModel");
-
 
 // 회원가입 컨트롤러 라우터로 보냄
 const signup = async (req, res, next) => {
@@ -125,9 +126,9 @@ const user = async (req, res, next) => {
     const { userId } = req.params;
     const user = await Members.findById( userId )
     .populate("awards")
-    // .populate("certificates")
-    // .populate("education")
-    // .populate("projects")
+    .populate("certificates")
+    .populate("education")
+    .populate("projects")
     ;
 
     if (!user) {
@@ -137,9 +138,9 @@ const user = async (req, res, next) => {
     res.status(200).json({
       user, 
       awards: user.awards,
-      // certificates: user.certificates,
-      // education: user.education,
-      // projects: user.projects,
+      certificates: user.certificates,
+      education: user.education,
+      projects: user.projects,
     });
 
   } catch (error) {
