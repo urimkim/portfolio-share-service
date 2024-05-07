@@ -1,26 +1,27 @@
-const { Schema } = require("mongoose");
+const { Schema } = require('mongoose');
 
 const CertificateSchema = new Schema(
   {
     userId: {
       type: String,
-      required: true,
+      required: true
     },
     certificateId: {
       type: String,
-      required: true,
+      required: true
     },
     title: {
       type: String,
-      required: true,
+      required: true
     },
     content: {
       type: String,
-      required: true,
-    },
+      required: true
+    }
   },
   {
     timestamps: true,
+    versionKey: false
   }
 );
 

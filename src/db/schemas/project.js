@@ -1,26 +1,27 @@
-const { Schema } = require("mongoose");
+const { Schema } = require('mongoose');
 
 const ProSchema = new Schema(
   {
     userId: {
       type: String,
-      required: true,
+      required: true
     },
     projectId: {
       type: String,
-      required: true,
+      required: true
     },
     title: {
       type: String,
-      required: true,
+      required: true
     },
     content: {
       type: String,
-      required: true,
-    },
+      required: true
+    }
   },
   {
     timestamps: true,
+    versionKey: false
   }
 );
 

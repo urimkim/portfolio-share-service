@@ -1,7 +1,7 @@
-const { model } = require("mongoose");
-const { CertificateSchema } = require("../schemas/certificate");
+const { model } = require('mongoose');
+const { CertificateSchema } = require('../schemas/certificate');
 
-const CertificateModel = model("Certificate", CertificateSchema);
+const CertificateModel = model('Certificate', CertificateSchema);
 
 class Certificate {
   static async create(newCertificate) {
@@ -9,15 +9,25 @@ class Certificate {
   }
 
   static async findById(certificateId) {
-    return await CertificateModel.findOne(certificateId);
+    return await CertificateModel.findOne(certificateId).lean();
   }
 
   static async findByUserId(userId) {
-    return await CertificateModel.find(userId);
+    return await CertificateModel.find(userId).lean();
   }
 
   static async deleteById(certificateId) {
     return await CertificateModel.deleteOne(certificateId);
+  }
+
+  static async findByUserIdAndCertificateIdAndDelete({
+    userId,
+    certificateId
+  }) {
+    return await CertificateModel.findOneAndDelete({
+      userId,
+      certificateId
+    }).lean();
   }
 
   static async update({ certificateId, fieldToUpdate, newValue }) {

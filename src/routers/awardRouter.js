@@ -5,7 +5,7 @@ const { authenticateUser } = require('../middlewares/authenticateUser');
 
 const awardRouter = Router();
 
-awardRouter.post('/awards', authenticateUser, async function (req, res, next) {
+awardRouter.post('/', authenticateUser, async function (req, res, next) {
   try {
     const { id: userId } = res.locals.user;
     const { title, content } = req.body;
@@ -35,19 +35,19 @@ awardRouter.post('/awards', authenticateUser, async function (req, res, next) {
   }
 });
 
-awardRouter.get('/awards', authenticateUser, async function (req, res, next) {
+awardRouter.get('/', authenticateUser, async function (req, res, next) {
   try {
     const userId = res.locals.user;
     const awards = await Award.findByUserId(userId);
 
-    res.json(awards);
+    res.status(200).json(awards);
   } catch (error) {
     next(error);
   }
 });
 
 awardRouter.put(
-  '/awards/:awardId',
+  '/:awardId',
   authenticateUser,
   authenticateUser,
   async function (req, res, next) {
@@ -67,7 +67,7 @@ awardRouter.put(
         toUpdate: { title, content }
       });
 
-      res.json(updatedAward);
+      res.status(200).json(updatedAward);
     } catch (error) {
       next(error);
     }
@@ -75,7 +75,7 @@ awardRouter.put(
 );
 
 awardRouter.delete(
-  '/awards/:awardId',
+  '/:awardId',
   authenticateUser,
   async function (req, res, next) {
     try {
@@ -90,7 +90,7 @@ awardRouter.delete(
 
       await Award.deleteById(awardId);
 
-      res.json({ message: '수상 내역이 정상적으로 삭제되었습니다.' });
+      res.status(200).json({ message: 'Award deleted successfully' });
     } catch (error) {
       next(error);
     }

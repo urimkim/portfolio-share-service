@@ -77,9 +77,7 @@ educationRouter.delete(
 
       await Education.deleteById(educationId);
 
-      res
-        .status(200)
-        .json({ message: '학력 내역이 정상적으로 삭제되었습니다.' });
+      res.status(200).json({ message: 'Education deleted successfully' });
     } catch (error) {
       next(error);
     }

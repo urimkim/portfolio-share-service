@@ -14,15 +14,18 @@ class Education {
     });
   }
   static async findById(educationId) {
-    return await EducationModel.findOne({ educationId });
+    return await EducationModel.findOne(educationId).lean();
   }
 
   static async findByUserId(userId) {
-    return await EducationModel.find({ userId });
+    return await EducationModel.find(userId).lean();
   }
 
-  static async deleteById(educationId) {
-    return await EducationModel.deleteOne({ educationId });
+  static async findByUserIdAndEducationIdAndDelete({ userId, educationId }) {
+    return await EducationModel.findOneAndDelete({
+      userId,
+      educationId
+    }).lean();
   }
 
   static async update({ educationId, toUpdate }) {

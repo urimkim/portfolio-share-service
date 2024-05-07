@@ -9,11 +9,11 @@ class Award {
   }
 
   static async findById(awardId) {
-    return await AwardModel.findById(awardId);
+    return await AwardModel.findOne(awardId).lean();
   }
 
   static async findByUserId(userId) {
-    return await AwardModel.find({ userId });
+    return await AwardModel.find(userId).lean();
   }
 
   static async deleteById(awardId) {

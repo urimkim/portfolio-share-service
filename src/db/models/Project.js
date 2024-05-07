@@ -1,7 +1,7 @@
-const { model } = require("mongoose");
-const { ProSchema } = require("../schemas/project");
+const { model } = require('mongoose');
+const { ProSchema } = require('../schemas/project');
 
-const ProjectModel = model("Project", ProSchema);
+const ProjectModel = model('Project', ProSchema);
 
 class Project {
   static async create(newProject) {
@@ -9,11 +9,11 @@ class Project {
   }
 
   static async findById(projectId) {
-    return await ProjectModel.findOne(projectId);
+    return await ProjectModel.findOne(projectId).lean();
   }
 
   static async findByUserId(userId) {
-    return await ProjectModel.find(userId);
+    return await ProjectModel.find(userId).lean();
   }
 
   static async deleteById(projectId) {

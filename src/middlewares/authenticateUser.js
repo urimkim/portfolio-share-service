@@ -1,23 +1,24 @@
 const jwt = require('jsonwebtoken');
+const config = require('../config');
+const secretKey = config.jwt;
 
 function authenticateUser(req, res, next) {
-  const Token = req.headers['authorization']?.split(' ')[1] ?? 'null';
+  const token = req.headers['authorization']?.split(' ')[1] ?? null;
 
-  if (Token === 'null') {
-    console.log('Authorization 토큰 없음');
-    res.status(400).send('로그인을 해주세요');
-    return;
+  if (token === null) {
+    return res.status(400).json({ errorMessage: '로그인을 해주세요' });
   }
 
-  try {
-    const jwtDecoded = jwt.verify(Token, secretKey);
-    res.locals.user = jwtDecoded.userId;
-
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err) {
+      if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({ errorMessage: '만료된 토큰입니다' });
+      }
+      return res.status(401).json({ errorMessage: '유효하지 않은 토큰' });
+    }
+    res.locals.user = decoded;
     next();
-  } catch (error) {
-    res.status(400).json({ errorMessage: error.message });
-    return;
-  }
+  });
 }
 
-module.exports = authenticateUser;
+module.exports = { authenticateUser };
