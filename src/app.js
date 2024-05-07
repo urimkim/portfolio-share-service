@@ -5,29 +5,24 @@ const { certificateRouter } = require("./routers/certificateRouter");
 const { projectRouter } = require("./routers/projectRouter");
 
 const cors = require("cors");
-const router = require("./routers/router");
-const config = require("./config/index");
+const authRouter = require("./routers/authRouter");
+const userRouter = require("./routers/userRouter");
+const config = require("./config/index")
 
 const app = express();
 
+// middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(awardRouter);
 app.use(certificateRouter);
 app.use(projectRouter);
-
-// middlewares
-app.use(cors());
-// router
-app.use("/api/auth", router);
-
 app.use(errorMiddleware);
+app.use(cors());
 
-/*
-app.listen(3000, (req, res) => {
-  console.log("Connected, 3000 port!");
-});
-*/
+// router
+app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
 
 // server
 app.listen(config.port, () => {

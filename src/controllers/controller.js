@@ -1,17 +1,32 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const Members = require("../models/model");
-const config = require("../config/index");
+const Members = require("../db/models/userModel");
+const config = require("../config");
+
+const Awards = require("../db/models/_awardModel");
+
 
 // 회원가입 컨트롤러 라우터로 보냄
-exports.signup = async (req, res, next) => {
+const signup = async (req, res, next) => {
   try {
+    const { name, email, password } = req.body;
+
+    if ( name === null || name === undefined || name === "" ) {
+      return res.status(400).json({ error: "이름 입력은 필수입니다" });
+    }
+    if ( email === null || email === undefined || email === "" ) {
+      return res.status(400).json({ error: "이메일 입력은 필수입니다" });
+    }
+    if ( password === null || password === undefined || password === "" ) {
+      return res.status(400).json({ error: "비밀번호 입력은 필수입니다" });      
+    }
+
     const member = await Members.findOne({ email: req.body.email });
 
     if (member) {
       return res
         .status(400)
-        .json({ status: "fail", message: "이미 등록된 사용자입니다" });
+        .json({ error: "이미 등록된 사용자입니다" });
     }
     const hashedPassword = await bcrypt.hash(req.body.password, 12);
 
@@ -22,23 +37,30 @@ exports.signup = async (req, res, next) => {
 
     res
       .status(201)
-      .json({ status: "success", message: "회원가입 성공", });
+      .json({ message: "회원가입 성공", });
   } catch (error) {
     next(error);
   }
 };
 
 // 로그인 컨트롤러 라우터로 보냄
-exports.login = async (req, res, next) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+
+    if ( email === null || email === undefined || email === "" ) {
+      return res.status(400).json({ error: "이메일 입력은 필수입니다" });
+    }
+    if ( password === null || password === undefined || password === "" ) {
+      return res.status(400).json({ error: "비밀번호 입력은 필수입니다" });      
+    }
 
     const member = await Members.findOne({ email });
 
     if (!member) {
       return res
         .status(400)
-        .json({ status: "fail", message: "사용자가 일치하지 않습니다" });
+        .json({ error: "이메일 또는 비밀번호가 일치하지 않습니다" });
     }
 
     const isPassword = await bcrypt.compare(password, member.password);
@@ -46,7 +68,7 @@ exports.login = async (req, res, next) => {
     if (!isPassword) {
       return res
         .status(400)
-        .json({ status: "fail", message: "비밀번호가 일치하지 않습니다" });
+        .json({ error: "이메일 또는 비밀번호가 일치하지 않습니다" });
     }
 
     // json web token
@@ -55,8 +77,6 @@ exports.login = async (req, res, next) => {
     });
 
     res.status(200).json({
-      status: "success",
-      message: "로그인 성공",
       token,      
     });
   } catch (error) {
@@ -64,18 +84,35 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// 사용자 목록 가져오기 컨트롤러 라우터로 보냄
-exports.users = async (req, res, next) => {
+// 전체 사용자 목록 가져오기 및 페이지네이션
+const pagesOrAllUsers = async (req, res, next) => {
   try {
-    const members = await Members.find({});
+    const allUsers = req.query.all === "true";
 
-    if (members === null || members === undefined) {
-      return res
-        .status(400)
-        .json({ status: "null", error: "사용자가 없습니다" });
+    if (allUsers) {
+      const members = await Members.find({});
+      if (members.length === 0) {
+        return res.status(400).json({ error: "사용자가 없습니다"});
+      }
+      return res.status(200).json({ members, });
+    } 
+
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+
+    if (isNaN(page) || page < 1) {
+      return res.status(400).json({ error: "페이지 번호가 잘못 입력되었습니다"});
+    }
+    if (isNaN(limit) || limit < 1) {
+      return res.status(400).json({ error: "값이 잘못 입력되었습니다"});
     }
 
-    res.status(200).json(members);
+    const skip = (page - 1) * limit;
+    const users = await Members.find({}).skip(skip).limit(limit);
+
+    res.status(200).json({
+      users,
+    });
 
   } catch (error) {
     next(error);
@@ -83,22 +120,37 @@ exports.users = async (req, res, next) => {
 };
 
 // 특정 사용자 조회해서 가져오기 컨트롤러 라우터로 보냄
-exports.user = async (req, res, next) => {
+const user = async (req, res, next) => {
   try {
-    const { name } = req.params;
-    const user = await Members.findOne({ name });
+    const { userId } = req.params;
+    const user = await Members.findById( userId )
+    .populate("awards")
+    // .populate("certificates")
+    // .populate("education")
+    // .populate("projects")
+    ;
 
     if (!user) {
       return res.status(400).json({ error: "해당 사용자가 없습니다"});
     }
 
     res.status(200).json({
-      status: "success",
-      message: "조회 성공",
       user, 
+      awards: user.awards,
+      // certificates: user.certificates,
+      // education: user.education,
+      // projects: user.projects,
     });
 
   } catch (error) {
     next(error);
   }
 };
+
+module.exports = {
+  signup,
+  login,
+  user,
+  pagesOrAllUsers,
+};
+
