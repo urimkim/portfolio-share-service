@@ -3,6 +3,9 @@ const jwt = require("jsonwebtoken");
 const Members = require("../db/models/userModel");
 const config = require("../config");
 
+const Awards = require("../db/models/awardModel");
+
+
 // 회원가입 컨트롤러 라우터로 보냄
 const signup = async (req, res, next) => {
   try {
@@ -119,8 +122,13 @@ const pagesOrAllUsers = async (req, res, next) => {
 // 특정 사용자 조회해서 가져오기 컨트롤러 라우터로 보냄
 const user = async (req, res, next) => {
   try {
-    const { name } = req.params;
-    const user = await Members.findOne({ name });
+    const { userId } = req.params;
+    const user = await Members.findById( userId )
+    .populate("awards")
+    // .populate("certificates")
+    // .populate("education")
+    // .populate("projects")
+    ;
 
     if (!user) {
       return res.status(400).json({ error: "해당 사용자가 없습니다"});
@@ -128,6 +136,10 @@ const user = async (req, res, next) => {
 
     res.status(200).json({
       user, 
+      awards: user.awards,
+      // certificates: user.certificates,
+      // education: user.education,
+      // projects: user.projects,
     });
 
   } catch (error) {
@@ -141,3 +153,4 @@ module.exports = {
   user,
   pagesOrAllUsers,
 };
+

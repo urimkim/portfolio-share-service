@@ -6,6 +6,6 @@ const router = express.Router();
 router.get("/users", controller.pagesOrAllUsers);
 
 // 특정 사용자 조회해서 가져오기 라우터
-router.get("/users/:name", controller.user);
+router.get("/users/:userId", controller.user);
 
 module.exports = router;

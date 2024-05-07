@@ -27,11 +27,16 @@ const UserSchema = new Schema({
     type: String,
     default: "설명이 없습니다. 추가해 주세요",
   },
+  awards: [{ type: mongoose.Schema.Types.ObjectId, ref: "Award" }],
+  certificates: [{ type: mongoose.Schema.Types.ObjectId, ref: "Certificate" }],
+  education: [{ type: mongoose.Schema.Types.ObjectId, ref: "Education" }],
+  projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
+
 }, {
   timestamps: true,
-  }
+  },
 );
 
-const Members = mongoose.model("members", UserSchema);
+const Members = mongoose.model("Member", UserSchema);
 
 module.exports = Members;
