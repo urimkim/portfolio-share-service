@@ -3,8 +3,6 @@ const jwt = require("jsonwebtoken");
 const Members = require("../db/models/userModel");
 const config = require("../config");
 
-const Awards = require("../db/models/_awardModel");
-
 
 // 회원가입 컨트롤러 라우터로 보냄
 const signup = async (req, res, next) => {

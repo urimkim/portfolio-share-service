@@ -20,8 +20,8 @@ db.on("error", (error) =>
 );
 
 module.exports = {
-  Award: Award,
-  Certificate: Certificate,
-  Project: Project,
-  Education: Education
+  Award,
+  Certificate,
+  Project,
+  Education
 };

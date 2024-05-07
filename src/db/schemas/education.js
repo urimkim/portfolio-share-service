@@ -4,7 +4,7 @@ const EducationSchema = new Schema(
   {
     userId: {
       type: String,
-      requried: true,
+      required: true,
     },
     educationId: {
       type: String,
