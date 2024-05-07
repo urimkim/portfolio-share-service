@@ -9,15 +9,25 @@ class Certificate {
   }
 
   static async findById(certificateId) {
-    return await CertificateModel.findOne(certificateId);
+    return await CertificateModel.findOne(certificateId).lean();
   }
 
   static async findByUserId(userId) {
-    return await CertificateModel.find(userId);
+    return await CertificateModel.find(userId).lean();
   }
 
   static async deleteById(certificateId) {
     return await CertificateModel.deleteOne(certificateId);
+  }
+
+  static async findByUserIdAndCertificateIdAndDelete({
+    userId,
+    certificateId,
+  }) {
+    return await CertificateModel.findOneAndDelete({
+      userId,
+      certificateId,
+    }).lean();
   }
 
   static async update({ certificateId, fieldToUpdate, newValue }) {
@@ -28,7 +38,7 @@ class Certificate {
     const updatedCertificate = await CertificateModel.findOneAndUpdate(
       filter,
       update,
-      option
+      option,
     ).lean();
     return updatedCertificate;
   }

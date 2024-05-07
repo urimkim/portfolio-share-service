@@ -21,7 +21,8 @@ const CertificateSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+    versionKey: false,
+  },
 );
 
 module.exports = { CertificateSchema };

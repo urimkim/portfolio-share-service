@@ -71,7 +71,7 @@ awardRouter.put(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 awardRouter.delete(
@@ -94,7 +94,7 @@ awardRouter.delete(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 module.exports = awardRouter;

@@ -21,6 +21,7 @@ const ProSchema = new Schema(
   },
   {
     timestamps: true,
+    versionKey: false,
   }
 );
 

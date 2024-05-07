@@ -1,22 +1,24 @@
-const jwt = require('jsonwebtoken');
-const secretKey = process.env.JWT; 
+const jwt = require("jsonwebtoken");
+const config = require("../config");
+const secretKey = config.jwt;
 
 function authenticateUser(req, res, next) {
-    const token = req.headers["authorization"]?.split(" ")[1] ?? "null";
-   
-    if (token === "null") {
-        console.log("Authorization 토큰 없음");
-        return res.status(400).send("로그인을 해주세요");
-    }
+  const token = req.headers["authorization"]?.split(" ")[1] ?? null;
 
-    try {
-        const jwtDecoded = jwt.verify(token, secretKey);
-        res.locals.user = jwtDecoded.userId;
-        next();
-    } catch (error) {
-        console.error("JWT 검증 오류:", error);
-        return res.status(400).json({ errorMessage: "유효하지 않은 토큰" });
+  if (token === null) {
+    return res.status(400).json({ errorMessage: "로그인을 해주세요" });
+  }
+
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err) {
+      if (err.name === "TokenExpiredError") {
+        return res.status(401).json({ errorMessage: "만료된 토큰입니다" });
+      }
+      return res.status(401).json({ errorMessage: "유효하지 않은 토큰" });
     }
+    res.locals.user = decoded;
+    next();
+  });
 }
 
 module.exports = { authenticateUser };

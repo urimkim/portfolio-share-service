@@ -12,22 +12,20 @@ const signup = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
-    if ( name === null || name === undefined || name === "" ) {
+    if (name === null || name === undefined || name === "") {
       return res.status(400).json({ error: "이름 입력은 필수입니다" });
     }
-    if ( email === null || email === undefined || email === "" ) {
+    if (email === null || email === undefined || email === "") {
       return res.status(400).json({ error: "이메일 입력은 필수입니다" });
     }
-    if ( password === null || password === undefined || password === "" ) {
-      return res.status(400).json({ error: "비밀번호 입력은 필수입니다" });      
+    if (password === null || password === undefined || password === "") {
+      return res.status(400).json({ error: "비밀번호 입력은 필수입니다" });
     }
 
     const member = await Members.findOne({ email: req.body.email });
 
     if (member) {
-      return res
-        .status(400)
-        .json({ error: "이미 등록된 사용자입니다" });
+      return res.status(400).json({ error: "이미 등록된 사용자입니다" });
     }
     const hashedPassword = await bcrypt.hash(req.body.password, 12);
 
@@ -36,9 +34,7 @@ const signup = async (req, res, next) => {
       password: hashedPassword,
     });
 
-    res
-      .status(201)
-      .json({ message: "회원가입 성공", });
+    res.status(201).json({ message: "회원가입 성공" });
   } catch (error) {
     next(error);
   }
@@ -49,11 +45,11 @@ const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    if ( email === null || email === undefined || email === "" ) {
+    if (email === null || email === undefined || email === "") {
       return res.status(400).json({ error: "이메일 입력은 필수입니다" });
     }
-    if ( password === null || password === undefined || password === "" ) {
-      return res.status(400).json({ error: "비밀번호 입력은 필수입니다" });      
+    if (password === null || password === undefined || password === "") {
+      return res.status(400).json({ error: "비밀번호 입력은 필수입니다" });
     }
 
     const member = await Members.findOne({ email });
@@ -78,7 +74,7 @@ const login = async (req, res, next) => {
     });
 
     res.status(200).json({
-      token,      
+      token,
     });
   } catch (error) {
     next(error);
@@ -93,19 +89,21 @@ const pagesOrAllUsers = async (req, res, next) => {
     if (allUsers) {
       const members = await Members.find({});
       if (members.length === 0) {
-        return res.status(400).json({ error: "사용자가 없습니다"});
+        return res.status(400).json({ error: "사용자가 없습니다" });
       }
-      return res.status(200).json({ members, });
-    } 
+      return res.status(200).json({ members });
+    }
 
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
 
     if (isNaN(page) || page < 1) {
-      return res.status(400).json({ error: "페이지 번호가 잘못 입력되었습니다"});
+      return res
+        .status(400)
+        .json({ error: "페이지 번호가 잘못 입력되었습니다" });
     }
     if (isNaN(limit) || limit < 1) {
-      return res.status(400).json({ error: "값이 잘못 입력되었습니다"});
+      return res.status(400).json({ error: "값이 잘못 입력되었습니다" });
     }
 
     const skip = (page - 1) * limit;
@@ -114,7 +112,6 @@ const pagesOrAllUsers = async (req, res, next) => {
     res.status(200).json({
       users,
     });
-
   } catch (error) {
     next(error);
   }
@@ -124,25 +121,26 @@ const pagesOrAllUsers = async (req, res, next) => {
 const user = async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const user = await Members.findById( userId )
-    .populate("awards")
-    .populate("certificates")
-    .populate("education")
-    .populate("projects")
-    ;
+    const user = await Members.findById(userId);
 
     if (!user) {
-      return res.status(400).json({ error: "해당 사용자가 없습니다"});
+      return res.status(400).json({ error: "해당 사용자가 없습니다" });
     }
 
-    res.status(200).json({
-      user, 
-      awards: user.awards,
-      certificates: user.certificates,
-      education: user.education,
-      projects: user.projects,
-    });
+    const [awards, certificates, education, projects] = await Promise.all([
+      Award.find({ userId }).lean(),
+      Certificate.find({ userId }).lean(),
+      Education.find({ userId }).lean(),
+      Project.find({ userId }).lean(),
+    ]);
 
+    res.status(200).json({
+      user,
+      awards,
+      certificates,
+      education,
+      projects,
+    });
   } catch (error) {
     next(error);
   }
@@ -154,4 +152,3 @@ module.exports = {
   user,
   pagesOrAllUsers,
 };
-

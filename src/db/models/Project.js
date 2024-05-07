@@ -9,11 +9,11 @@ class Project {
   }
 
   static async findById(projectId) {
-    return await ProjectModel.findOne(projectId);
+    return await ProjectModel.findOne(projectId).lean();
   }
 
   static async findByUserId(userId) {
-    return await ProjectModel.find(userId);
+    return await ProjectModel.find(userId).lean();
   }
 
   static async deleteById(projectId) {
@@ -28,7 +28,7 @@ class Project {
     const updatedProject = await ProjectModel.findOneAndUpdate(
       filter,
       update,
-      option
+      option,
     ).lean();
     return updatedProject;
   }

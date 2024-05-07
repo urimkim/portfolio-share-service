@@ -6,8 +6,8 @@ const awardRouter = require("./routers/awardRouter");
 const certificateRouter = require("./routers/certificateRouter");
 const projectRouter = require("./routers/projectRouter");
 const errorMiddleware = require("./middlewares/errorMiddleware");
-const educationRouter = require('./routers/educationRouter');
-const config = require("./config/index")
+const educationRouter = require("./routers/educationRouter");
+const config = require("./config");
 
 const app = express();
 
@@ -22,12 +22,11 @@ app.use("/api/users", userRouter);
 app.use("/api/my-info/awards", awardRouter);
 app.use("/api/my-info/certificates", certificateRouter);
 app.use("/api/my-info/projects", projectRouter);
-app.use('/api/my-info/educations', educationRouter);
+app.use("/api/my-info/educations", educationRouter);
 
 //app.use(errorMiddleware);
 
 // server
 app.listen(config.port, () => {
   console.log(`${config.applicationName} Server on ${config.port}`);
-
 });

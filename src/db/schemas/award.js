@@ -21,7 +21,8 @@ const AwardSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+    versionKey: false,
+  },
 );
 
 module.exports = { AwardSchema };

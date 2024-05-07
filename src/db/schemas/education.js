@@ -26,10 +26,8 @@ const EducationSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+    versionKey: false,
+  },
 );
 
 module.exports = EducationSchema;
-
-
-

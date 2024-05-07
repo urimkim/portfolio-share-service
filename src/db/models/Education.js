@@ -1,21 +1,27 @@
-const mongoose = require('mongoose');
-const EducationSchema = require('../schemas/education');
+const mongoose = require("mongoose");
+const EducationSchema = require("../schemas/education");
 
-const EducationModel = mongoose.model('Education', EducationSchema);
+const EducationModel = mongoose.model("Education", EducationSchema);
 
 class Education {
-  static async create({userId, educationId, school, major, status}) {
-    return await EducationModel.create({userId, educationId, school, major, status});
+  static async create({ userId, educationId, school, major, status }) {
+    return await EducationModel.create({
+      userId,
+      educationId,
+      school,
+      major,
+      status,
+    });
   }
-  static async findById( educationId ) {
+  static async findById(educationId) {
     return await EducationModel.findOne({ educationId });
   }
 
-  static async findByUserId( userId ) {
-    return await EducationModel.find({ userId });
+  static async findByUserId(userId) {
+    return await EducationModel.find({ userId }).lean();
   }
 
-  static async deleteById( educationId ) {
+  static async deleteById(educationId) {
     return await EducationModel.deleteOne({ educationId });
   }
 
@@ -28,10 +34,9 @@ class Education {
       filter,
       update,
       options,
-    );
+    ).lean();
     return updatedEducation;
   }
-
 }
 
-module.exports =  { Education } ;
+module.exports = { Education };
