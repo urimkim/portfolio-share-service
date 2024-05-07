@@ -16,10 +16,6 @@ class Certificate {
     return await CertificateModel.find(userId).lean();
   }
 
-  static async deleteById(certificateId) {
-    return await CertificateModel.deleteOne(certificateId);
-  }
-
   static async findByUserIdAndCertificateIdAndDelete({
     userId,
     certificateId

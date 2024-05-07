@@ -28,7 +28,7 @@ educationRouter.get('/', authenticateUser, async function (req, res, next) {
     const userId = res.locals.user;
     const educations = await Education.findByUserId(userId);
 
-    res.status(200).json(educations);
+    res.json(educations);
   } catch (error) {
     next(error);
   }
@@ -54,7 +54,7 @@ educationRouter.put(
         toUpdate: { school, major, status }
       });
 
-      res.status(200).json(updatedEducation);
+      res.json(updatedEducation);
     } catch (error) {
       next(error);
     }
@@ -69,15 +69,18 @@ educationRouter.delete(
       const educationId = req.params.educationId;
       const userId = res.locals.user;
 
-      const education = await Education.findById(educationId);
+      const education = await Education.findByUserIdAndEducationIdAndDelete({
+        userId,
+        educationId
+      });
 
       if (!education || education.userId !== userId) {
         return res.status(403).json({ message: '삭제 권한이 없습니다.' });
       }
 
-      await Education.deleteById(educationId);
-
-      res.status(200).json({ message: 'Education deleted successfully' });
+      res
+        .status(204)
+        .json({ message: '학력 내역이 정상적으로 삭제되었습니다.' });
     } catch (error) {
       next(error);
     }

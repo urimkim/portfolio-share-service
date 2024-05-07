@@ -40,7 +40,7 @@ awardRouter.get('/', authenticateUser, async function (req, res, next) {
     const userId = res.locals.user;
     const awards = await Award.findByUserId(userId);
 
-    res.status(200).json(awards);
+    res.json(awards);
   } catch (error) {
     next(error);
   }
@@ -56,6 +56,19 @@ awardRouter.put(
       const { title, content } = req.body;
       const userId = res.locals.user;
 
+      if (title === null || title === undefined || title === '') {
+        const error = new Error('수상명은 필수입니다.');
+        error.name = 'Insufficient Award Info';
+        error.statusCode = 400;
+        throw error;
+      }
+      if (content === null || content === undefined || content === '') {
+        const error = new Error('수상 내용은 필수입니다.');
+        error.name = 'Insufficient Award Info';
+        error.statusCode = 400;
+        throw error;
+      }
+
       const award = await Award.findById(awardId);
 
       if (!award || award.userId !== userId) {
@@ -67,7 +80,7 @@ awardRouter.put(
         toUpdate: { title, content }
       });
 
-      res.status(200).json(updatedAward);
+      res.json(updatedAward);
     } catch (error) {
       next(error);
     }
@@ -82,15 +95,18 @@ awardRouter.delete(
       const awardId = req.params.awardId;
       const userId = res.locals.user;
 
-      const award = await Award.findById(awardId);
+      const award = await Award.findByUserIdAndAwardIdAndDelete({
+        userId,
+        awardId
+      });
 
       if (!award || award.userId !== userId) {
         return res.status(403).json({ message: 'Forbidden' });
       }
 
-      await Award.deleteById(awardId);
-
-      res.status(200).json({ message: 'Award deleted successfully' });
+      res
+        .status(204)
+        .json({ message: '수상 내역이 정상적으로 삭제되었습니다.' });
     } catch (error) {
       next(error);
     }

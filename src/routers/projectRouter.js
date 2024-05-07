@@ -41,7 +41,7 @@ projectRouter.get('/', authenticateUser, async function (req, res, next) {
     const userId = res.locals.user;
     const projects = await Project.findByUserId(userId);
 
-    res.status(200).json(projects);
+    res.json(projects);
   } catch (error) {
     next(error);
   }
@@ -67,7 +67,7 @@ projectRouter.put(
         toUpdate: { title, content }
       });
 
-      res.status(200).json(updatedProject);
+      res.json(updatedProject);
     } catch (error) {
       next(error);
     }
@@ -82,15 +82,18 @@ projectRouter.delete(
       const projectId = req.params.projectId;
       const userId = res.locals.user;
 
-      const project = await Project.findById(projectId);
+      const project = await Project.findByUserIdAndProjectIdAndDelete({
+        userId,
+        projectId
+      });
 
       if (!project || project.userId !== userId) {
         return res.status(403).json({ message: 'Forbidden' });
       }
 
-      await Project.deleteById(projectId);
-
-      res.status(200).json({ message: 'Project deleted successfully' });
+      res
+        .status(204)
+        .json({ message: '프로젝트 내역이 정상적으로 삭제되었습니다.' });
     } catch (error) {
       next(error);
     }

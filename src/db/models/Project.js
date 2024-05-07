@@ -16,8 +16,11 @@ class Project {
     return await ProjectModel.find(userId).lean();
   }
 
-  static async deleteById(projectId) {
-    return await ProjectModel.deleteOne(projectId);
+  static async findByUserIdAndProjectIdAndDelete({ userId, projectId }) {
+    return await ProjectModel.findOneAndDelete({
+      userId,
+      projectId
+    }).lean();
   }
 
   static async update({ projectId, toUpdate }) {

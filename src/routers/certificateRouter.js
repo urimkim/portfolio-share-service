@@ -43,7 +43,7 @@ certificateRouter.get(
       const userId = res.locals.user;
       const certificates = await Certificate.findByUserId(userId);
 
-      res.status(200).json(certificates);
+      res.json(certificates);
     } catch (error) {
       next(error);
     }
@@ -59,6 +59,19 @@ certificateRouter.put(
       const { title, content } = req.body;
       const userId = res.locals.user;
 
+      if (title === null || title === undefined || title === '') {
+        const error = new Error('자격증명은 필수입니다.');
+        error.name = 'Insufficient Award Info';
+        error.statusCode = 400;
+        throw error;
+      }
+      if (content === null || content === undefined || content === '') {
+        const error = new Error('자격증 내용은 필수입니다.');
+        error.name = 'Insufficient Award Info';
+        error.statusCode = 400;
+        throw error;
+      }
+
       // TODO: DELETE랑 비슷하게 findByUserIdAndCertificateIdAndUpdate로 수정해보자
       // 그러면 DB에서 한번만 조회하게 됨
       const certificate = await Certificate.findById(certificateId);
@@ -72,7 +85,7 @@ certificateRouter.put(
         toUpdate: { title, content }
       });
 
-      res.status(200).json(updatedCertificate);
+      res.json(updatedCertificate);
     } catch (error) {
       next(error);
     }
@@ -97,7 +110,9 @@ certificateRouter.delete(
         return res.status(403).json({ message: 'Forbidden' });
       }
 
-      res.status(204).json({ message: 'Certificate deleted successfully' });
+      res
+        .status(204)
+        .json({ message: '자격증 내역이 정상적으로 삭제되었습니다.' });
     } catch (error) {
       next(error);
     }

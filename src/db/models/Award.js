@@ -16,8 +16,11 @@ class Award {
     return await AwardModel.find(userId).lean();
   }
 
-  static async deleteById(awardId) {
-    return await AwardModel.deleteOne(awardId);
+  static async findByUserIdAndAwardIdAndDelete({ userId, awardId }) {
+    return await AwardModel.findOneAndDelete({
+      userId,
+      awardId
+    }).lean();
   }
 
   static async update({ awardId, toUpdate }) {
