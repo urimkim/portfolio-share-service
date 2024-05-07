@@ -76,4 +76,4 @@ educationRouter.delete('/:educationId', authenticateUser, async function (req, r
   }
 });
 
-module.exports =   { educationRouter } ;
+module.exports =  educationRouter ;

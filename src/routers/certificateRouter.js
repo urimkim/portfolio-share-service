@@ -6,7 +6,7 @@ const { authenticateUser } = require("../middlewares/authenticateUser");
 const certificateRouter = Router();
 
 certificateRouter.post(
-  "/certificates",
+  "/",
   authenticateUser,
   async function (req, res, next) {
     try {
@@ -105,4 +105,4 @@ certificateRouter.delete(
   }
 );
 
-module.exports = { certificateRouter };
+module.exports =  certificateRouter ;

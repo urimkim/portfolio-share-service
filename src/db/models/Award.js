@@ -1,7 +1,7 @@
 const { model } = require("mongoose");
 const { AwardSchema } = require("../schemas/award");
 
-const AwardModel = model("Education", AwardSchema);
+const AwardModel = model("Award", AwardSchema);
 
 class Award {
   static async create(newAward) {

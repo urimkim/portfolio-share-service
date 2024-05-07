@@ -6,7 +6,7 @@ const { authenticateUser } = require("../middlewares/authenticateUser");
 const projectRouter = Router();
 
 projectRouter.post(
-  "/projects",
+  "/",
   authenticateUser,
   async function (req, res, next) {
     try {
@@ -41,7 +41,7 @@ projectRouter.post(
 );
 
 projectRouter.get(
-  "/projects",
+  "/",
   authenticateUser,
   async function (req, res, next) {
     try {
@@ -56,7 +56,7 @@ projectRouter.get(
 );
 
 projectRouter.put(
-  "/projects/:projectId",
+  "/:projectId",
   authenticateUser,
   async function (req, res, next) {
     try {
@@ -83,7 +83,7 @@ projectRouter.put(
 );
 
 projectRouter.delete(
-  "/projects/:projectId",
+  "/:projectId",
   authenticateUser,
   async function (req, res, next) {
     try {
@@ -105,4 +105,4 @@ projectRouter.delete(
   }
 );
 
-module.exports = { projectRouter };
+module.exports =  projectRouter ;

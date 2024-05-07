@@ -5,7 +5,7 @@ const { authenticateUser } = require("../middlewares/authenticateUser");
 
 const awardRouter = Router();
 
-awardRouter.post("/awards", authenticateUser, async function (req, res, next) {
+awardRouter.post("/", authenticateUser, async function (req, res, next) {
   try {
     const { id: userId } = res.locals.user;
     const { title, content } = req.body;
@@ -35,7 +35,7 @@ awardRouter.post("/awards", authenticateUser, async function (req, res, next) {
   }
 });
 
-awardRouter.get("/awards", authenticateUser, async function (req, res, next) {
+awardRouter.get("/", authenticateUser, async function (req, res, next) {
   try {
     const userId = res.locals.user;
     const awards = await Award.findByUserId(userId);
@@ -47,7 +47,7 @@ awardRouter.get("/awards", authenticateUser, async function (req, res, next) {
 });
 
 awardRouter.put(
-  "/awards/:awardId",
+  "/:awardId",
   authenticateUser,
   authenticateUser,
   async function (req, res, next) {
@@ -75,7 +75,7 @@ awardRouter.put(
 );
 
 awardRouter.delete(
-  "/awards/:awardId",
+  "/:awardId",
   authenticateUser,
   async function (req, res, next) {
     try {
@@ -97,4 +97,4 @@ awardRouter.delete(
   }
 );
 
-module.exports = { awardRouter };
+module.exports = awardRouter;
