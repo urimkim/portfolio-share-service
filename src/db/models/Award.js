@@ -1,28 +1,35 @@
-const { AwardModel } = require("../schemas/award");
+const { model } = require("mongoose");
+const { AwardSchema } = require("../schemas/award");
+
+const AwardModel = model("Education", AwardSchema);
 
 class Award {
   static async create(newAward) {
     return await AwardModel.create(newAward);
   }
 
-  static async findById({ awardId }) {
-    return await AwardModel.findOne({ id: awardId });
+  static async findById(awardId) {
+    return await AwardModel.findOne(awardId);
   }
 
-  static async findByUserId({ userId }) {
-    return await AwardModel.find({ userId });
+  static async findByUserId(userId) {
+    return await AwardModel.find(userId);
   }
 
-  static async update({ awardId, fieldToUpdate, newValue }) {
-    const filter = { id: awardId };
-    const update = { [fieldToUpdate]: newValue };
+  static async deleteById(awardId) {
+    return await AwardModel.deleteOne(awardId);
+  }
+
+  static async update({ awardId, toUpdate }) {
+    const filter = { awardId };
+    const update = toUpdate;
     const option = { returnOriginal: false };
 
     const updatedAward = await AwardModel.findOneAndUpdate(
       filter,
       update,
       option
-    );
+    ).lean();
     return updatedAward;
   }
 }

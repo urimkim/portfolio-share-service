@@ -4,10 +4,9 @@ const { awardRouter } = require("./routers/awardRouter");
 const { certificateRouter } = require("./routers/certificateRouter");
 const { projectRouter } = require("./routers/projectRouter");
 
-const mongoose = require("mongoose");
 const cors = require("cors");
 const router = require("./routers/router");
-const config = require("./config/index")
+const config = require("./config/index");
 
 const app = express();
 
@@ -21,15 +20,6 @@ app.use(projectRouter);
 app.use(cors());
 // router
 app.use("/api/auth", router);
-// mongodb
-mongoose
-  .connect(config.mongoDBURI)
-  .then(() => {
-    console.log("DB 연결 성공");
-  })
-  .catch(() => {
-    console.log("DB 연결 실패");
-  });
 
 app.use(errorMiddleware);
 

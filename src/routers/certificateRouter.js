@@ -1,97 +1,108 @@
 const { Router } = require("express");
-const { Certificate } = require("../db/index");
+const { Certificate } = require("../db");
 const { v4: uuidv4 } = require("uuid");
+const { authenticateUser } = require("../middlewares/authenticateUser");
 
 const certificateRouter = Router();
 
-certificateRouter.post("/certificates", async function (req, res, next) {
-  try {
-    if (Object.keys(req.body).length === 0) {
-      throw new Error("정보가 입력되지 않았습니다.");
-    }
-    const { userId, title, content } = req.body;
-
-    const newCertificate = await Certificate.create({
-      id: uuidv4(),
-      userId,
-      title,
-      content,
-    });
-    console.log(newCertificate);
-    res.status(201).json(newCertificate);
-  } catch (error) {
-    next(error);
-  }
-});
-
-certificateRouter.get(
-  "/certificateList/:userId",
+certificateRouter.post(
+  "/certificates",
+  authenticateUser,
   async function (req, res, next) {
     try {
-      const userId = req.params.userId;
-      const certificateList = await Certificate.findByUserId(userId);
-      res.status(200).send(certificateList);
+      const { title, content } = req.body;
+      const userId = res.locals.user;
+
+      if (title === null || title === undefined || title === "") {
+        const error = new Error("자격증명은 필수입니다.");
+        error.name = "Insufficient Certificate Info";
+        error.statusCode = 400;
+        throw error;
+      }
+      if (content === null || content === undefined || content === "") {
+        const error = new Error("자격증 내용은 필수입니다.");
+        error.name = "Insufficient Certificate Info";
+        error.statusCode = 400;
+        throw error;
+      }
+
+      const newCertificate = await Certificate.create({
+        userId,
+        certificateId: uuidv4(),
+        title,
+        content,
+      });
+      console.log(userId);
+      res.status(201).json(newCertificate);
     } catch (error) {
       next(error);
     }
   }
 );
 
-certificateRouter.get("/certificates/:id", async function (req, res, next) {
-  try {
-    const certificateId = req.params.id;
+certificateRouter.get(
+  "/certificates",
+  authenticateUser,
+  async function (req, res, next) {
+    try {
+      const userId = res.locals.user;
+      const certificates = await Certificate.findByUserId(userId);
 
-    const certificate = await Certificate.findById(certificateId);
-
-    if (certificate.errorMessage) {
-      throw new Error(certificate.errorMessage);
+      res.status(200).json(certificates);
+    } catch (error) {
+      next(error);
     }
-
-    res.status(200).send(certificate);
-  } catch (error) {
-    next(error);
   }
-});
+);
 
-certificateRouter.put("/certificates/:id", async function (req, res, next) {
-  try {
-    const certificateId = req.params.id;
+certificateRouter.put(
+  "/certificates/:certificateId",
+  authenticateUser,
+  async function (req, res, next) {
+    try {
+      const certificateId = req.params.certificateId;
+      const { title, content } = req.body;
+      const userId = res.locals.user;
 
-    const title = req.body.title;
-    const content = req.body.content;
+      const certificate = await Certificate.findById(certificateId);
 
-    const toUpdate = { title, content };
+      if (!certificate || certificate.userId !== userId) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
 
-    let certificate = await Certificate.findById(certificateId);
-
-    if (toUpdate.title) {
-      const fieldToUpdate = "title";
-      const newValue = toUpdate.title;
-      certificate = await Certificate.update({
+      const updatedCertificate = await Certificate.update({
         certificateId,
-        fieldToUpdate,
-        newValue,
+        toUpdate: { title, content },
       });
-    }
 
-    if (toUpdate.content) {
-      const fieldToUpdate = "content";
-      const newValue = toUpdate.content;
-      certificate = await Certificate.update({
-        certificateId,
-        fieldToUpdate,
-        newValue,
-      });
+      res.status(200).json(updatedCertificate);
+    } catch (error) {
+      next(error);
     }
-
-    if (certificate.errorMessage) {
-      throw new Error(certificate.errorMessage);
-    }
-
-    res.status(200).send(project);
-  } catch (error) {
-    next(error);
   }
-});
+);
+
+certificateRouter.delete(
+  "/certificates/:certificateId",
+  authenticateUser,
+  async function (req, res, next) {
+    try {
+      const certificateId = req.params.certificateId;
+      const userId = res.locals.user;
+
+      const certificate = await Certificate.findById(certificateId);
+
+      if (!certificate || certificate.userId !== userId) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      await Certificate.deleteById(certificateId);
+
+      res.status(200).json({ message: "Certificate deleted successfully" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 module.exports = { certificateRouter };

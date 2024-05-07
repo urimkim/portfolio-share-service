@@ -1,19 +1,31 @@
 const { Router } = require("express");
-const { Award } = require("../db/index");
+const { Award } = require("../db");
 const { v4: uuidv4 } = require("uuid");
+const { authenticateUser } = require("../middlewares/authenticateUser");
 
 const awardRouter = Router();
 
-awardRouter.post("/awards", async function (req, res, next) {
+awardRouter.post("/awards", authenticateUser, async function (req, res, next) {
   try {
-    if (Object.keys(req.body).length === 0) {
-      throw new Error("정보가 입력되지 않았습니다.");
+    const { id: userId } = res.locals.user;
+    const { title, content } = req.body;
+
+    if (title === null || title === undefined || title === "") {
+      const error = new Error("수상명은 필수입니다.");
+      error.name = "Insufficient Award Info";
+      error.statusCode = 400;
+      throw error;
     }
-    const { userId, title, content } = req.body;
+    if (content === null || content === undefined || content === "") {
+      const error = new Error("수상 내용은 필수입니다.");
+      error.name = "Insufficient Award Info";
+      error.statusCode = 400;
+      throw error;
+    }
 
     const newAward = await Award.create({
-      id: uuidv4(),
       userId,
+      awardId: uuidv4(),
       title,
       content,
     });
@@ -23,63 +35,66 @@ awardRouter.post("/awards", async function (req, res, next) {
   }
 });
 
-awardRouter.get("/awardList/:userId", async function (req, res, next) {
+awardRouter.get("/awards", authenticateUser, async function (req, res, next) {
   try {
-    const userId = req.params.userId;
-    const awardList = await Award.findByUserId(userId);
-    res.status(200).send(awardList);
+    const userId = res.locals.user;
+    const awards = await Award.findByUserId(userId);
+
+    res.status(200).json(awards);
   } catch (error) {
     next(error);
   }
 });
 
-awardRouter.get("/awards/:id", async function (req, res, next) {
-  try {
-    const awardId = req.params.id;
+awardRouter.put(
+  "/awards/:awardId",
+  authenticateUser,
+  authenticateUser,
+  async function (req, res, next) {
+    try {
+      const awardId = req.params.awardId;
+      const { title, content } = req.body;
+      const userId = res.locals.user;
 
-    const award = await Award.findById(awardId);
+      const award = await Award.findById(awardId);
 
-    if (award.errorMessage) {
-      throw new Error(award.errorMessage);
+      if (!award || award.userId !== userId) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      const updatedAward = await Award.update({
+        awardId,
+        toUpdate: { title, content },
+      });
+
+      res.status(200).json(updatedAward);
+    } catch (error) {
+      next(error);
     }
-
-    res.status(200).send(award);
-  } catch (error) {
-    next(error);
   }
-});
+);
 
-awardRouter.put("/awards/:id", async function (req, res, next) {
-  try {
-    const awardId = req.params.id;
+awardRouter.delete(
+  "/awards/:awardId",
+  authenticateUser,
+  async function (req, res, next) {
+    try {
+      const awardId = req.params.awardId;
+      const userId = res.locals.user;
 
-    const title = req.body.title;
-    const content = req.body.content;
+      const award = await Award.findById(awardId);
 
-    const toUpdate = { title, content };
+      if (!award || award.userId !== userId) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
 
-    let award = await Award.findById(awardId);
+      await Award.deleteById(awardId);
 
-    if (toUpdate.title) {
-      const fieldToUpdate = "title";
-      const newValue = toUpdate.title;
-      award = await Award.update({ awardId, fieldToUpdate, newValue });
+      res.status(200).json({ message: "Award deleted successfully" });
+    } catch (error) {
+      next(error);
     }
-
-    if (toUpdate.content) {
-      const fieldToUpdate = "content";
-      const newValue = toUpdate.content;
-      award = await Award.update({ awardId, fieldToUpdate, newValue });
-    }
-
-    if (award.errorMessage) {
-      throw new Error(award.errorMessage);
-    }
-
-    res.status(200).send(award);
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 module.exports = { awardRouter };

@@ -1,12 +1,12 @@
-const { Schema, model } = require("mongoose");
+const { Schema } = require("mongoose");
 
 const CertificateSchema = new Schema(
   {
-    id: {
+    userId: {
       type: String,
       required: true,
     },
-    userId: {
+    certificateId: {
       type: String,
       required: true,
     },
@@ -24,5 +24,4 @@ const CertificateSchema = new Schema(
   }
 );
 
-const CertificateModel = model("Certificate", CertificateSchema);
-module.exports = { CertificateModel };
+module.exports = { CertificateSchema };

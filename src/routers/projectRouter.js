@@ -1,86 +1,108 @@
 const { Router } = require("express");
-const { Project } = require("../db/index");
+const { Project } = require("../db");
 const { v4: uuidv4 } = require("uuid");
+const { authenticateUser } = require("../middlewares/authenticateUser");
 
 const projectRouter = Router();
 
-projectRouter.post("/projects", async function (req, res, next) {
-  try {
-    if (Object.keys(req.body).length === 0) {
-      throw new Error("정보가 입력되지 않았습니다.");
-    }
-    const { userId, title, content } = req.body;
+projectRouter.post(
+  "/projects",
+  authenticateUser,
+  async function (req, res, next) {
+    try {
+      const { title, content } = req.body;
+      const userId = res.locals.user;
 
-    const newProject = await Project.create({
-      id: uuidv4(),
-      userId,
-      title,
-      content,
-    });
-    console.log(newProject);
-    res.status(201).json(newProject);
-  } catch (error) {
-    next(error);
+      if (title === null || title === undefined || title === "") {
+        const error = new Error("프로젝트명은 필수입니다.");
+        error.name = "Insufficient Project Info";
+        error.statusCode = 400;
+        throw error;
+      }
+      if (content === null || content === undefined || content === "") {
+        const error = new Error("프로젝트 내용은 필수입니다.");
+        error.name = "Insufficient Project Info";
+        error.statusCode = 400;
+        throw error;
+      }
+
+      const newProject = await Project.create({
+        userId,
+        projectId: uuidv4(),
+        title,
+        content,
+      });
+      console.log(userId);
+      res.status(201).json(newProject);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
-projectRouter.get("/projectList/:userId", async function (req, res, next) {
-  try {
-    const userId = req.params.userId;
-    const projcetList = await Project.findByUserId(userId);
-    res.status(200).send(projcetList);
-  } catch (error) {
-    next(error);
+projectRouter.get(
+  "/projects",
+  authenticateUser,
+  async function (req, res, next) {
+    try {
+      const userId = res.locals.user;
+      const projects = await Project.findByUserId(userId);
+
+      res.status(200).json(projects);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
-projectRouter.get("/projects/:id", async function (req, res, next) {
-  try {
-    const projectId = req.params.id;
+projectRouter.put(
+  "/projects/:projectId",
+  authenticateUser,
+  async function (req, res, next) {
+    try {
+      const projectId = req.params.projectId;
+      const { title, content } = req.body;
+      const userId = res.locals.user;
 
-    const project = await Project.findById(projectId);
+      const project = await Project.findById(projectId);
 
-    if (project.errorMessage) {
-      throw new Error(project.errorMessage);
+      if (!project || project.userId !== userId) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      const updatedProject = await Project.update({
+        projectId,
+        toUpdate: { title, content },
+      });
+
+      res.status(200).json(updatedProject);
+    } catch (error) {
+      next(error);
     }
-
-    res.status(200).send(projcet);
-  } catch (error) {
-    next(error);
   }
-});
+);
 
-projectRouter.put("/projects/:id", async function (req, res, next) {
-  try {
-    const projectId = req.params.id;
+projectRouter.delete(
+  "/projects/:projectId",
+  authenticateUser,
+  async function (req, res, next) {
+    try {
+      const projectId = req.params.projectId;
+      const userId = res.locals.user;
 
-    const title = req.body.title;
-    const content = req.body.content;
+      const project = await Project.findById(projectId);
 
-    const toUpdate = { title, content };
+      if (!project || project.userId !== userId) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
 
-    let project = await Project.findById(projectId);
+      await Project.deleteById(projectId);
 
-    if (toUpdate.title) {
-      const fieldToUpdate = "title";
-      const newValue = toUpdate.title;
-      project = await Project.update({ projectId, fieldToUpdate, newValue });
+      res.status(200).json({ message: "Project deleted successfully" });
+    } catch (error) {
+      next(error);
     }
-
-    if (toUpdate.content) {
-      const fieldToUpdate = "content";
-      const newValue = toUpdate.content;
-      project = await Project.update({ projectId, fieldToUpdate, newValue });
-    }
-
-    if (project.errorMessage) {
-      throw new Error(project.errorMessage);
-    }
-
-    res.status(200).send(project);
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 module.exports = { projectRouter };

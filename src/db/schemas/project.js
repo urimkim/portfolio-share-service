@@ -1,12 +1,12 @@
-const { Schema, model } = require("mongoose");
+const { Schema } = require("mongoose");
 
 const ProSchema = new Schema(
   {
-    id: {
+    userId: {
       type: String,
       required: true,
     },
-    userId: {
+    projectId: {
       type: String,
       required: true,
     },
@@ -24,5 +24,4 @@ const ProSchema = new Schema(
   }
 );
 
-const ProjectModel = model("Project", ProSchema);
-module.exports = { ProjectModel };
+module.exports = { ProSchema };

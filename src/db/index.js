@@ -19,6 +19,8 @@ db.on("error", (error) =>
   console.error("MongoDB 연결에 실패하였습니다...\n" + DB_URL + "\n" + error)
 );
 
-module.exports = { Award };
-module.exports = { Certificate };
-module.exports = { Project };
+module.exports = {
+  Award: Award,
+  Certificate: Certificate,
+  Project: Project,
+};

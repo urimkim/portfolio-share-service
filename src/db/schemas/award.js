@@ -1,12 +1,12 @@
-const { Schema, model } = require("mongoose");
+const { Schema } = require("mongoose");
 
 const AwardSchema = new Schema(
   {
-    id: {
+    userId: {
       type: String,
       required: true,
     },
-    userId: {
+    awardId: {
       type: String,
       required: true,
     },
@@ -24,5 +24,4 @@ const AwardSchema = new Schema(
   }
 );
 
-const AwardModel = model("Education", AwardSchema);
-module.exports = { AwardModel };
+module.exports = { AwardSchema };

@@ -1,16 +1,23 @@
-const { CertificateModel } = require("../schemas/certificate");
+const { model } = require("mongoose");
+const { CertificateSchema } = require("../schemas/certificate");
+
+const CertificateModel = model("Certificate", CertificateSchema);
 
 class Certificate {
   static async create(newCertificate) {
     return await CertificateModel.create(newCertificate);
   }
 
-  static async findById({ certificateId }) {
-    return await CertificateModel.findOne({ id: certificateId });
+  static async findById(certificateId) {
+    return await CertificateModel.findOne(certificateId);
   }
 
-  static async findByUserId({ userId }) {
-    return await CertificateModel.find({ userId });
+  static async findByUserId(userId) {
+    return await CertificateModel.find(userId);
+  }
+
+  static async deleteById(certificateId) {
+    return await CertificateModel.deleteOne(certificateId);
   }
 
   static async update({ certificateId, fieldToUpdate, newValue }) {
@@ -22,7 +29,7 @@ class Certificate {
       filter,
       update,
       option
-    );
+    ).lean();
     return updatedCertificate;
   }
 }
