@@ -1,7 +1,7 @@
 const { model } = require('mongoose');
-const { AwardSchema } = require('../schemas/award');
+const awardSchema = require('../schemas/award');
 
-const AwardModel = model('Award', AwardSchema);
+const AwardModel = model('Award', awardSchema);
 
 class Award {
   static async create(newAward) {
@@ -37,4 +37,4 @@ class Award {
   }
 }
 
-module.exports = { Award };
+module.exports = Award;

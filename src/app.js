@@ -24,7 +24,7 @@ app.use('/api/my-info/certificates', certificateRouter);
 app.use('/api/my-info/projects', projectRouter);
 app.use('/api/my-info/educations', educationRouter);
 
-//app.use(errorMiddleware);
+app.use(errorMiddleware);
 
 // server
 app.listen(config.port, () => {

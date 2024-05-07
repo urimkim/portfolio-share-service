@@ -1,7 +1,7 @@
 const { model } = require('mongoose');
-const { ProSchema } = require('../schemas/project');
+const projectSchema = require('../schemas/project');
 
-const ProjectModel = model('Project', ProSchema);
+const ProjectModel = model('Project', projectSchema);
 
 class Project {
   static async create(newProject) {
@@ -37,4 +37,4 @@ class Project {
   }
 }
 
-module.exports = { Project };
+module.exports = Project;

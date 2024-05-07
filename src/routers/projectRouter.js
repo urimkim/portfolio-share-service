@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { Project } = require('../db');
 const { v4: uuidv4 } = require('uuid');
-const { authenticateUser } = require('../middlewares/authenticateUser');
+const authenticateUser = require('../middlewares/authenticateUser');
 
 const projectRouter = Router();
 

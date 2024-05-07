@@ -1,6 +1,6 @@
 const { Schema } = require('mongoose');
 
-const ProSchema = new Schema(
+const projectSchema = new Schema(
   {
     userId: {
       type: String,
@@ -25,4 +25,4 @@ const ProSchema = new Schema(
   }
 );
 
-module.exports = { ProSchema };
+module.exports = projectSchema;

@@ -1,7 +1,7 @@
 const { model } = require('mongoose');
-const { CertificateSchema } = require('../schemas/certificate');
+const certificateSchema = require('../schemas/certificate');
 
-const CertificateModel = model('Certificate', CertificateSchema);
+const CertificateModel = model('Certificate', certificateSchema);
 
 class Certificate {
   static async create(newCertificate) {
@@ -40,4 +40,4 @@ class Certificate {
   }
 }
 
-module.exports = { Certificate };
+module.exports = Certificate;

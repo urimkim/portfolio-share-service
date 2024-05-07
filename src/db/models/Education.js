@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const EducationSchema = require('../schemas/education');
+const educationSchema = require('../schemas/education');
 
-const EducationModel = mongoose.model('Education', EducationSchema);
+const EducationModel = mongoose.model('Education', educationSchema);
 
 class Education {
   static async create({ userId, educationId, school, major, status }) {
@@ -42,4 +42,4 @@ class Education {
   }
 }
 
-module.exports = { Education };
+module.exports = Education;

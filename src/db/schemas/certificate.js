@@ -1,6 +1,6 @@
 const { Schema } = require('mongoose');
 
-const CertificateSchema = new Schema(
+const certificateSchema = new Schema(
   {
     userId: {
       type: String,
@@ -25,4 +25,4 @@ const CertificateSchema = new Schema(
   }
 );
 
-module.exports = { CertificateSchema };
+module.exports = certificateSchema;

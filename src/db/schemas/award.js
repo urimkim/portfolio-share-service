@@ -1,6 +1,6 @@
 const { Schema } = require('mongoose');
 
-const AwardSchema = new Schema(
+const awardSchema = new Schema(
   {
     userId: {
       type: String,
@@ -25,4 +25,4 @@ const AwardSchema = new Schema(
   }
 );
 
-module.exports = { AwardSchema };
+module.exports = awardSchema;

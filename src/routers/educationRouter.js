@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { Education } = require('../db/models/Education');
 const { v4: uuidv4 } = require('uuid');
-const { authenticateUser } = require('../middlewares/authenticateUser');
+const authenticateUser = require('../middlewares/authenticateUser');
 
 const educationRouter = Router();
 

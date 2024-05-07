@@ -1,6 +1,6 @@
 const { Schema } = require('mongoose');
 
-const EducationSchema = new Schema(
+const educationSchema = new Schema(
   {
     userId: {
       type: String,
@@ -30,4 +30,4 @@ const EducationSchema = new Schema(
   }
 );
 
-module.exports = EducationSchema;
+module.exports = educationSchema;
