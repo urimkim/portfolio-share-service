@@ -12,7 +12,7 @@ function authenticateUser(req, res, next) {
   try {
     const secretKey = process.env.JWT_SECRET_KEY || "secret-key";
     const jwtDecoded = jwt.verify(userToken, secretKey);
-    req.userId = jwtDecoded.userId;
+    res.locals.user = jwtDecoded.userId;
 
     next();
   } catch (error) {
