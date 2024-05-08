@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { Award } = require('../db');
+const { Award } = require('../db/models/Award');
 const { v4: uuidv4 } = require('uuid');
 const authenticateUser = require('../middlewares/authenticateUser');
 
@@ -46,46 +46,41 @@ awardRouter.get('/', authenticateUser, async function (req, res, next) {
   }
 });
 
-awardRouter.put(
-  '/:awardId',
-  authenticateUser,
-  authenticateUser,
-  async function (req, res, next) {
-    try {
-      const awardId = req.params.awardId;
-      const { title, content } = req.body;
-      const userId = res.locals.user;
+awardRouter.put('/:awardId', authenticateUser, async function (req, res, next) {
+  try {
+    const awardId = req.params.awardId;
+    const { title, content } = req.body;
+    const userId = res.locals.user;
 
-      if (title === null || title === undefined || title === '') {
-        const error = new Error('수상명은 필수입니다.');
-        error.name = 'Insufficient Award Info';
-        error.statusCode = 400;
-        throw error;
-      }
-      if (content === null || content === undefined || content === '') {
-        const error = new Error('수상 내용은 필수입니다.');
-        error.name = 'Insufficient Award Info';
-        error.statusCode = 400;
-        throw error;
-      }
-
-      const award = await Award.findById(awardId);
-
-      if (!award || award.userId !== userId) {
-        return res.status(403).json({ message: 'Forbidden' });
-      }
-
-      const updatedAward = await Award.update({
-        awardId,
-        toUpdate: { title, content }
-      });
-
-      res.json(updatedAward);
-    } catch (error) {
-      next(error);
+    if (title === null || title === undefined || title === '') {
+      const error = new Error('수상명은 필수입니다.');
+      error.name = 'Insufficient Award Info';
+      error.statusCode = 400;
+      throw error;
     }
+    if (content === null || content === undefined || content === '') {
+      const error = new Error('수상 내용은 필수입니다.');
+      error.name = 'Insufficient Award Info';
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const award = await Award.findById(awardId);
+
+    if (!award || award.userId !== userId) {
+      return res.status(403).json({ message: '수정 권한이 없습니다.' });
+    }
+
+    const updatedAward = await Award.update({
+      awardId,
+      toUpdate: { title, content }
+    });
+
+    res.json(updatedAward);
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 awardRouter.delete(
   '/:awardId',

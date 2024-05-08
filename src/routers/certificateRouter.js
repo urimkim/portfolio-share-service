@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { Certificate } = require('../db');
+const { Certificate } = require('../db/models/Certificate');
 const { v4: uuidv4 } = require('uuid');
 const authenticateUser = require('../middlewares/authenticateUser');
 
@@ -35,23 +35,19 @@ certificateRouter.post('/', authenticateUser, async function (req, res, next) {
   }
 });
 
-certificateRouter.get(
-  '/certificates',
-  authenticateUser,
-  async function (req, res, next) {
-    try {
-      const userId = res.locals.user;
-      const certificates = await Certificate.findByUserId(userId);
+certificateRouter.get('/', authenticateUser, async function (req, res, next) {
+  try {
+    const userId = res.locals.user;
+    const certificates = await Certificate.findByUserId(userId);
 
-      res.json(certificates);
-    } catch (error) {
-      next(error);
-    }
+    res.json(certificates);
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 certificateRouter.put(
-  '/certificates/:certificateId',
+  '/:certificateId',
   authenticateUser,
   async function (req, res, next) {
     try {
@@ -77,7 +73,7 @@ certificateRouter.put(
       const certificate = await Certificate.findById(certificateId);
 
       if (!certificate || certificate.userId !== userId) {
-        return res.status(403).json({ message: 'Forbidden' });
+        return res.status(403).json({ message: '수정 권한이 없습니다.' });
       }
 
       const updatedCertificate = await Certificate.update({
@@ -93,7 +89,7 @@ certificateRouter.put(
 );
 
 certificateRouter.delete(
-  '/certificates/:certificateId',
+  '/:certificateId',
   authenticateUser,
   async function (req, res, next) {
     try {

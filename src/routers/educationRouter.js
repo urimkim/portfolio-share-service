@@ -9,6 +9,20 @@ educationRouter.post('/', authenticateUser, async function (req, res, next) {
   try {
     const { school, major, status } = req.body;
     const userId = res.locals.user;
+
+    if (title === null || title === undefined || title === '') {
+      const error = new Error('학력명은 필수입니다.');
+      error.name = 'Insufficient Project Info';
+      error.statusCode = 400;
+      throw error;
+    }
+    if (content === null || content === undefined || content === '') {
+      const error = new Error('학력 내용은 필수입니다.');
+      error.name = 'Insufficient Project Info';
+      error.statusCode = 400;
+      throw error;
+    }
+
     const newEducation = await Education.create({
       userId,
       educationId: uuidv4(),
@@ -42,6 +56,19 @@ educationRouter.put(
       const educationId = req.params.educationId;
       const { school, major, status } = req.body;
       const userId = res.locals.user;
+
+      if (title === null || title === undefined || title === '') {
+        const error = new Error('학력명은 필수입니다.');
+        error.name = 'Insufficient Project Info';
+        error.statusCode = 400;
+        throw error;
+      }
+      if (content === null || content === undefined || content === '') {
+        const error = new Error('학력 내용은 필수입니다.');
+        error.name = 'Insufficient Project Info';
+        error.statusCode = 400;
+        throw error;
+      }
 
       const education = await Education.findById(educationId);
 

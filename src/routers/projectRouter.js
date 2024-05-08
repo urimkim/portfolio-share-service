@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { Project } = require('../db');
+const { Project } = require('../db/models/Project');
 const { v4: uuidv4 } = require('uuid');
 const authenticateUser = require('../middlewares/authenticateUser');
 
@@ -56,10 +56,23 @@ projectRouter.put(
       const { title, content } = req.body;
       const userId = res.locals.user;
 
+      if (title === null || title === undefined || title === '') {
+        const error = new Error('프로젝트명은 필수입니다.');
+        error.name = 'Insufficient Project Info';
+        error.statusCode = 400;
+        throw error;
+      }
+      if (content === null || content === undefined || content === '') {
+        const error = new Error('프로젝트 내용은 필수입니다.');
+        error.name = 'Insufficient Project Info';
+        error.statusCode = 400;
+        throw error;
+      }
+
       const project = await Project.findById(projectId);
 
       if (!project || project.userId !== userId) {
-        return res.status(403).json({ message: 'Forbidden' });
+        return res.status(403).json({ message: '수정 권한이 없습니다.' });
       }
 
       const updatedProject = await Project.update({
