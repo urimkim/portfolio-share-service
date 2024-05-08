@@ -7,8 +7,8 @@ const awardRouter = Router();
 
 awardRouter.post('/', authenticateUser, async function (req, res, next) {
   try {
-    const { id: userId } = res.locals.user;
     const { title, content } = req.body;
+    const userId = res.locals.user;
 
     if (title === null || title === undefined || title === '') {
       const error = new Error('수상명은 필수입니다.');
@@ -67,11 +67,12 @@ awardRouter.put('/:awardId', authenticateUser, async function (req, res, next) {
 
     const award = await Award.findById(awardId);
 
-    if (!award || award.userId !== userId) {
+    if (!award || award.userId !== userId._id) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
     const updatedAward = await Award.update({
+      userId,
       awardId,
       toUpdate: { title, content }
     });

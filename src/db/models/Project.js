@@ -9,7 +9,7 @@ class Project {
   }
 
   static async findById(projectId) {
-    return await ProjectModel.findOne(projectId).lean();
+    return await ProjectModel.findOne({ projectId }).lean();
   }
 
   static async findByUserId(userId) {
@@ -23,8 +23,8 @@ class Project {
     }).lean();
   }
 
-  static async update({ projectId, toUpdate }) {
-    const filter = { projectId };
+  static async update({ projectId, toUpdate, userId }) {
+    const filter = { projectId, userId };
     const update = toUpdate;
     const option = { returnOriginal: false };
 

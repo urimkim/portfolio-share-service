@@ -72,11 +72,12 @@ certificateRouter.put(
       // 그러면 DB에서 한번만 조회하게 됨
       const certificate = await Certificate.findById(certificateId);
 
-      if (!certificate || certificate.userId !== userId) {
+      if (!certificate || certificate.userId !== userId._id) {
         return res.status(403).json({ message: 'Forbidden' });
       }
 
       const updatedCertificate = await Certificate.update({
+        userId,
         certificateId,
         toUpdate: { title, content }
       });

@@ -9,7 +9,7 @@ class Certificate {
   }
 
   static async findById(certificateId) {
-    return await CertificateModel.findOne(certificateId).lean();
+    return await CertificateModel.findOne({ certificateId }).lean();
   }
 
   static async findByUserId(userId) {
@@ -26,9 +26,9 @@ class Certificate {
     }).lean();
   }
 
-  static async update({ certificateId, fieldToUpdate, newValue }) {
-    const filter = { id: certificateId };
-    const update = { [fieldToUpdate]: newValue };
+  static async update({ certificateId, toUpdate, userId }) {
+    const filter = { certificateId, userId };
+    const update = toUpdate;
     const option = { returnOriginal: false };
 
     const updatedCertificate = await CertificateModel.findOneAndUpdate(
