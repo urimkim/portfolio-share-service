@@ -47,7 +47,7 @@ educationRouter.post('/', authenticateUser, async function (req, res, next) {
 
 educationRouter.get('/', authenticateUser, async function (req, res, next) {
   try {
-    const userId = res.locals.user;
+    const { userId } = res.locals.user;
     const educations = await Education.findByUserId(userId);
 
     res.json(educations);
@@ -87,6 +87,7 @@ educationRouter.put(
       }
 
       const education = await Education.findById(educationId);
+      console.log(userId, education.userId);
 
       if (!education || education.userId !== userId) {
         return res.status(403).json({ message: '수정 권한이 없습니다.' });
