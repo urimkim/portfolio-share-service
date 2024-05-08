@@ -4,8 +4,8 @@ const awardSchema = require('../schemas/award');
 const AwardModel = model('Award', awardSchema);
 
 class Award {
-  static async create(newAward) {
-    return await AwardModel.create(newAward);
+  static async create({ userId, awardId, title, content }) {
+    return await AwardModel.create({ userId, awardId, title, content });
   }
 
   static async findById(awardId) {

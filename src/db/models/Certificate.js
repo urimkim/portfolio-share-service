@@ -4,8 +4,13 @@ const certificateSchema = require('../schemas/certificate');
 const CertificateModel = model('Certificate', certificateSchema);
 
 class Certificate {
-  static async create(newCertificate) {
-    return await CertificateModel.create(newCertificate);
+  static async create({ userId, certificateId, title, content }) {
+    return await CertificateModel.create({
+      userId,
+      certificateId,
+      title,
+      content
+    });
   }
 
   static async findById(certificateId) {
