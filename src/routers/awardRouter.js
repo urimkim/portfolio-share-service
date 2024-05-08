@@ -7,7 +7,7 @@ const awardRouter = Router();
 
 awardRouter.post('/', authenticateUser, async function (req, res, next) {
   try {
-    const { id: userId } = res.locals.user;
+    const userId = res.locals.user;
     const { title, content } = req.body;
 
     if (title === null || title === undefined || title === '') {
@@ -68,7 +68,7 @@ awardRouter.put('/:awardId', authenticateUser, async function (req, res, next) {
     const award = await Award.findById(awardId);
 
     if (!award || award.userId !== userId) {
-      return res.status(403).json({ message: 'Forbidden' });
+      return res.status(403).json({ message: '수정 권한이 없습니다.' });
     }
 
     const updatedAward = await Award.update({
@@ -96,7 +96,7 @@ awardRouter.delete(
       });
 
       if (!award || award.userId !== userId) {
-        return res.status(403).json({ message: 'Forbidden' });
+        return res.status(403).json({ message: '삭제 권한이 없습니다.' });
       }
 
       res

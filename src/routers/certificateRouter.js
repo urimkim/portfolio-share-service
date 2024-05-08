@@ -57,13 +57,13 @@ certificateRouter.put(
 
       if (title === null || title === undefined || title === '') {
         const error = new Error('자격증명은 필수입니다.');
-        error.name = 'Insufficient Award Info';
+        error.name = 'Insufficient Certificate Info';
         error.statusCode = 400;
         throw error;
       }
       if (content === null || content === undefined || content === '') {
         const error = new Error('자격증 내용은 필수입니다.');
-        error.name = 'Insufficient Award Info';
+        error.name = 'Insufficient Certificate Info';
         error.statusCode = 400;
         throw error;
       }
@@ -73,7 +73,7 @@ certificateRouter.put(
       const certificate = await Certificate.findById(certificateId);
 
       if (!certificate || certificate.userId !== userId) {
-        return res.status(403).json({ message: 'Forbidden' });
+        return res.status(403).json({ message: '수정 권한이 없습니다.' });
       }
 
       const updatedCertificate = await Certificate.update({
@@ -103,7 +103,7 @@ certificateRouter.delete(
         });
 
       if (certificate === null) {
-        return res.status(403).json({ message: 'Forbidden' });
+        return res.status(403).json({ message: '삭제 권한이 없습니다.' });
       }
 
       res

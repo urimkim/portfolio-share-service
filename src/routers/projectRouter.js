@@ -72,7 +72,7 @@ projectRouter.put(
       const project = await Project.findById(projectId);
 
       if (!project || project.userId !== userId) {
-        return res.status(403).json({ message: 'Forbidden' });
+        return res.status(403).json({ message: '수정 권한이 없습니다.' });
       }
 
       const updatedProject = await Project.update({
@@ -101,7 +101,7 @@ projectRouter.delete(
       });
 
       if (!project || project.userId !== userId) {
-        return res.status(403).json({ message: 'Forbidden' });
+        return res.status(403).json({ message: '삭제 권한이 없습니다.' });
       }
 
       res

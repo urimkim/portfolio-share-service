@@ -26,9 +26,9 @@ class Certificate {
     }).lean();
   }
 
-  static async update({ certificateId, fieldToUpdate, newValue }) {
+  static async update({ certificateId, toUpdate }) {
     const filter = { id: certificateId };
-    const update = { [fieldToUpdate]: newValue };
+    const update = toUpdate;
     const option = { returnOriginal: false };
 
     const updatedCertificate = await CertificateModel.findOneAndUpdate(
