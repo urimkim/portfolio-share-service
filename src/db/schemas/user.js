@@ -24,14 +24,11 @@ const userSchema = new Schema(
     description: {
       type: String,
       default: '설명이 없습니다. 추가해 주세요'
-    },
-    awards: [{ type: Schema.Types.ObjectId, ref: 'Award' }],
-    certificates: [{ type: Schema.Types.ObjectId, ref: 'Certificate' }],
-    education: [{ type: Schema.Types.ObjectId, ref: 'Education' }],
-    projects: [{ type: Schema.Types.ObjectId, ref: 'Project' }]
+    }
   },
   {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
   }
 );
 
