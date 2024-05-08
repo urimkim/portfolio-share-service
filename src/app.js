@@ -2,10 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const authRouter = require('./routers/authRouter');
 const userRouter = require('./routers/userRouter');
+const errorMiddleware = require('./middlewares/errorMiddleware');
 const awardRouter = require('./routers/awardRouter');
 const certificateRouter = require('./routers/certificateRouter');
 const projectRouter = require('./routers/projectRouter');
-const errorMiddleware = require('./middlewares/errorMiddleware');
 const educationRouter = require('./routers/educationRouter');
 const config = require('./config');
 

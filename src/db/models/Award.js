@@ -1,7 +1,7 @@
-const { model } = require('mongoose');
+const mongoose = require('mongoose');
 const awardSchema = require('../schemas/award');
 
-const AwardModel = model('Award', awardSchema);
+const AwardModel = mongoose.model('Award', awardSchema);
 
 class Award {
   static async create({ userId, awardId, title, content }) {

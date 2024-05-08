@@ -1,7 +1,7 @@
-const { model } = require('mongoose');
+const mongoose = require('mongoose');
 const certificateSchema = require('../schemas/certificate');
 
-const CertificateModel = model('Certificate', certificateSchema);
+const CertificateModel = mongoose.model('Certificate', certificateSchema);
 
 class Certificate {
   static async create({ userId, certificateId, title, content }) {

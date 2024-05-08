@@ -1,7 +1,7 @@
-const { model } = require('mongoose');
+const mongoose = require('mongoose');
 const projectSchema = require('../schemas/project');
 
-const ProjectModel = model('Project', projectSchema);
+const ProjectModel = mongoose.model('Project', projectSchema);
 
 class Project {
   static async create({ userId, projectId, title, content }) {
