@@ -4,8 +4,8 @@ const projectSchema = require('../schemas/project');
 const ProjectModel = model('Project', projectSchema);
 
 class Project {
-  static async create(newProject) {
-    return await ProjectModel.create(newProject);
+  static async create({ userId, projectId, title, content }) {
+    return await ProjectModel.create({ userId, projectId, title, content });
   }
 
   static async findById(projectId) {
@@ -13,7 +13,7 @@ class Project {
   }
 
   static async findByUserId(userId) {
-    return await ProjectModel.find(userId).lean();
+    return await ProjectModel.find({ userId }).lean();
   }
 
   static async findByUserIdAndProjectIdAndDelete({ userId, projectId }) {

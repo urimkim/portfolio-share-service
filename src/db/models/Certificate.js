@@ -1,11 +1,16 @@
-const { model } = require('mongoose');
+const mongoose = require('mongoose');
 const certificateSchema = require('../schemas/certificate');
 
-const CertificateModel = model('Certificate', certificateSchema);
+const CertificateModel = mongoose.model('Certificate', certificateSchema);
 
 class Certificate {
-  static async create(newCertificate) {
-    return await CertificateModel.create(newCertificate);
+  static async create({ userId, certificateId, title, content }) {
+    return await CertificateModel.create({
+      userId,
+      certificateId,
+      title,
+      content
+    });
   }
 
   static async findById(certificateId) {
@@ -13,7 +18,7 @@ class Certificate {
   }
 
   static async findByUserId(userId) {
-    return await CertificateModel.find(userId).lean();
+    return await CertificateModel.find({ userId }).lean();
   }
 
   static async findByUserIdAndCertificateIdAndDelete({

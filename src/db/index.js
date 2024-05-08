@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const Award = require('./models/Award');
-const Certificate = require('./models/Certificate');
-const Project = require('./models/Project');
+const Award = require('../db/models/Award');
+const Certificate = require('../db/models/Certificate');
+const Project = require('../db/models/Project');
 const Education = require('../db/models/Education');
 require('dotenv').config();
 
