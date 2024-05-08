@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { Education } = require('../db/models/Education');
+const { Education } = require('../db');
 const { v4: uuidv4 } = require('uuid');
 const authenticateUser = require('../middlewares/authenticateUser');
 
@@ -12,13 +12,13 @@ educationRouter.post('/', authenticateUser, async function (req, res, next) {
 
     if (title === null || title === undefined || title === '') {
       const error = new Error('학력명은 필수입니다.');
-      error.name = 'Insufficient Project Info';
+      error.name = 'Insufficient Certificate Info';
       error.statusCode = 400;
       throw error;
     }
     if (content === null || content === undefined || content === '') {
       const error = new Error('학력 내용은 필수입니다.');
-      error.name = 'Insufficient Project Info';
+      error.name = 'Insufficient Certificate Info';
       error.statusCode = 400;
       throw error;
     }
@@ -59,13 +59,13 @@ educationRouter.put(
 
       if (title === null || title === undefined || title === '') {
         const error = new Error('학력명은 필수입니다.');
-        error.name = 'Insufficient Project Info';
+        error.name = 'Insufficient Certificate Info';
         error.statusCode = 400;
         throw error;
       }
       if (content === null || content === undefined || content === '') {
         const error = new Error('학력 내용은 필수입니다.');
-        error.name = 'Insufficient Project Info';
+        error.name = 'Insufficient Certificate Info';
         error.statusCode = 400;
         throw error;
       }

@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { Certificate } = require('../db/models/Certificate');
+const { Certificate } = require('../db');
 const { v4: uuidv4 } = require('uuid');
 const authenticateUser = require('../middlewares/authenticateUser');
 
@@ -73,7 +73,7 @@ certificateRouter.put(
       const certificate = await Certificate.findById(certificateId);
 
       if (!certificate || certificate.userId !== userId) {
-        return res.status(403).json({ message: '수정 권한이 없습니다.' });
+        return res.status(403).json({ message: 'Forbidden' });
       }
 
       const updatedCertificate = await Certificate.update({

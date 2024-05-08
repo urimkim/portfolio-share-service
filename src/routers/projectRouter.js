@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { Project } = require('../db/models/Project');
+const { Project } = require('../db');
 const { v4: uuidv4 } = require('uuid');
 const authenticateUser = require('../middlewares/authenticateUser');
 
@@ -72,7 +72,7 @@ projectRouter.put(
       const project = await Project.findById(projectId);
 
       if (!project || project.userId !== userId) {
-        return res.status(403).json({ message: '수정 권한이 없습니다.' });
+        return res.status(403).json({ message: 'Forbidden' });
       }
 
       const updatedProject = await Project.update({

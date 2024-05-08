@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { Award } = require('../db/models/Award');
+const { Award } = require('../db');
 const { v4: uuidv4 } = require('uuid');
 const authenticateUser = require('../middlewares/authenticateUser');
 
@@ -68,7 +68,7 @@ awardRouter.put('/:awardId', authenticateUser, async function (req, res, next) {
     const award = await Award.findById(awardId);
 
     if (!award || award.userId !== userId) {
-      return res.status(403).json({ message: '수정 권한이 없습니다.' });
+      return res.status(403).json({ message: 'Forbidden' });
     }
 
     const updatedAward = await Award.update({
