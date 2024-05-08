@@ -74,6 +74,7 @@ const login = async (req, res, next) => {
     });
 
     res.status(200).json({
+      userId: member._id,
       token
     });
   } catch (error) {
