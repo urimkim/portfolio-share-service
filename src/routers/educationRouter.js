@@ -10,15 +10,23 @@ educationRouter.post('/', authenticateUser, async function (req, res, next) {
     const { school, major, status } = req.body;
     const userId = res.locals.user;
 
-    if (title === null || title === undefined || title === '') {
+    if (school === null || school === undefined || school === '') {
       const error = new Error('학력명은 필수입니다.');
-      error.name = 'Insufficient Certificate Info';
+      error.name = 'Insufficient Education Info';
       error.statusCode = 400;
       throw error;
     }
-    if (content === null || content === undefined || content === '') {
-      const error = new Error('학력 내용은 필수입니다.');
-      error.name = 'Insufficient Certificate Info';
+
+    if (major === null || major === undefined || major === '') {
+      const error = new Error('전공명은 필수입니다.');
+      error.name = 'Insufficient Education Info';
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (status === null || status === undefined || status === '') {
+      const error = new Error('학력을 선택해주세요.');
+      error.name = 'Insufficient Education Info';
       error.statusCode = 400;
       throw error;
     }
