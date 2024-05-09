@@ -1,6 +1,5 @@
 const { Router } = require('express');
 const { Award } = require('../db');
-const { v4: uuidv4 } = require('uuid');
 const authenticateUser = require('../middlewares/authenticateUser');
 
 const awardRouter = Router();
@@ -20,7 +19,6 @@ awardRouter.post('/', authenticateUser, async function (req, res, next) {
 
     const newAward = await Award.create({
       userId,
-      awardId: uuidv4(),
       title,
       content
     });
@@ -41,9 +39,9 @@ awardRouter.get('/', authenticateUser, async function (req, res, next) {
   }
 });
 
-awardRouter.put('/:awardId', authenticateUser, async function (req, res, next) {
+awardRouter.put('/:_id', authenticateUser, async function (req, res, next) {
   try {
-    const awardId = req.params.awardId;
+    const awardId = req.params._id;
     const { title, content } = req.body;
     const userId = res.locals.user;
 
@@ -71,30 +69,24 @@ awardRouter.put('/:awardId', authenticateUser, async function (req, res, next) {
   }
 });
 
-awardRouter.delete(
-  '/:awardId',
-  authenticateUser,
-  async function (req, res, next) {
-    try {
-      const awardId = req.params.awardId;
-      const userId = res.locals.user;
+awardRouter.delete('/:_id', authenticateUser, async function (req, res, next) {
+  try {
+    const awardId = req.params._id;
+    const userId = res.locals.user;
 
-      const award = await Award.findByUserIdAndAwardIdAndDelete({
-        userId,
-        awardId
-      });
+    const award = await Award.findByUserIdAndAwardIdAndDelete({
+      userId,
+      awardId
+    });
 
-      if (award === null || award.userId !== userId._id) {
-        return res.status(403).json({ error: '삭제 권한이 없습니다.' });
-      }
-
-      res
-        .status(204)
-        .json({ message: '수상 내역이 정상적으로 삭제되었습니다.' });
-    } catch (error) {
-      next(error);
+    if (award === null || award.userId !== userId._id) {
+      return res.status(403).json({ error: '삭제 권한이 없습니다.' });
     }
+
+    res.status(204).json({ message: '수상 내역이 정상적으로 삭제되었습니다.' });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 module.exports = awardRouter;

@@ -1,14 +1,13 @@
 const { Router } = require('express');
 const { Certificate } = require('../db');
-const { v4: uuidv4 } = require('uuid');
 const authenticateUser = require('../middlewares/authenticateUser');
 
 const certificateRouter = Router();
 
 certificateRouter.post('/', authenticateUser, async function (req, res, next) {
   try {
-    const { title, content } = req.body;
     const userId = res.locals.user;
+    const { title, content } = req.body;
 
     if (title === null || title === undefined || title === '') {
       return res.status(400).json({ error: '자격증명은 필수입니다.' });
@@ -20,7 +19,6 @@ certificateRouter.post('/', authenticateUser, async function (req, res, next) {
 
     const newCertificate = await Certificate.create({
       userId,
-      certificateId: uuidv4(),
       title,
       content
     });
@@ -42,11 +40,11 @@ certificateRouter.get('/', authenticateUser, async function (req, res, next) {
 });
 
 certificateRouter.put(
-  '/:certificateId',
+  '/:_id',
   authenticateUser,
   async function (req, res, next) {
     try {
-      const certificateId = req.params.certificateId;
+      const certificateId = req.params._id;
       const { title, content } = req.body;
       const userId = res.locals.user;
 
@@ -77,11 +75,11 @@ certificateRouter.put(
 );
 
 certificateRouter.delete(
-  '/:certificateId',
+  '/:_id',
   authenticateUser,
   async function (req, res, next) {
     try {
-      const certificateId = req.params.certificateId;
+      const certificateId = req.params._id;
       const userId = res.locals.user;
 
       const certificate =

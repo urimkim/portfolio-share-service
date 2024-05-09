@@ -6,10 +6,6 @@ const awardSchema = new Schema(
       type: String,
       required: true
     },
-    awardId: {
-      type: String,
-      required: true
-    },
     title: {
       type: String,
       required: true

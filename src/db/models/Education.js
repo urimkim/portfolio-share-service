@@ -3,36 +3,20 @@ const educationSchema = require('../schemas/education');
 const EducationModel = mongoose.model('Education', educationSchema);
 
 class Education {
-  static async create({ userId, educationId, school, major, status }) {
-    return await EducationModel.create({
-      userId,
-      educationId,
-      school,
-      major,
-      status
-    });
-  }
-  static async findById(educationId) {
-    return await EducationModel.findOne({ educationId }).lean();
+  static async create({ userId, school, major, status }) {
+    return await EducationModel.create({ userId, school, major, status });
   }
 
   static async findByUserId(userId) {
-    return await EducationModel.find(userId).lean();
-  }
-
-  static async findByUserIdAndEducationIdAndDelete({ userId, educationId }) {
-    return await EducationModel.findOneAndDelete({
-      userId,
-      educationId
-    }).lean();
+    return await EducationModel.find({ userId: userId }).lean();
   }
 
   static async findByUserIdAndEducationIdAndUpdate({
     userId,
-    educationId,
+    educationId: _id,
     toUpdate
   }) {
-    const filter = { userId, educationId };
+    const filter = { userId, _id };
     const update = toUpdate;
     const options = { returnOriginal: false };
 
@@ -42,6 +26,16 @@ class Education {
       options
     ).lean();
     return updatedEducation;
+  }
+
+  static async findByUserIdAndEducationIdAndDelete({
+    userId,
+    educationId: _id
+  }) {
+    return await EducationModel.findOneAndDelete({
+      userId,
+      _id
+    }).lean();
   }
 }
 

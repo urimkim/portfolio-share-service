@@ -1,6 +1,5 @@
 const { Router } = require('express');
 const { Project } = require('../db');
-const { v4: uuidv4 } = require('uuid');
 const authenticateUser = require('../middlewares/authenticateUser');
 
 const projectRouter = Router();
@@ -19,7 +18,6 @@ projectRouter.post('/', authenticateUser, async function (req, res, next) {
 
     const newProject = await Project.create({
       userId,
-      projectId: uuidv4(),
       title,
       content
     });
@@ -41,45 +39,41 @@ projectRouter.get('/', authenticateUser, async function (req, res, next) {
   }
 });
 
-projectRouter.put(
-  '/:projectId',
-  authenticateUser,
-  async function (req, res, next) {
-    try {
-      const projectId = req.params.projectId;
-      const { title, content } = req.body;
-      const userId = res.locals.user;
+projectRouter.put('/:_id', authenticateUser, async function (req, res, next) {
+  try {
+    const projectId = req.params._id;
+    const { title, content } = req.body;
+    const userId = res.locals.user;
 
-      if (title === null || title === undefined || title === '') {
-        return res.status(400).json({ error: '프로젝트명은 필수입니다.' });
-      }
-      if (content === null || content === undefined || content === '') {
-        return res.status(400).json({ error: '프로젝트명 내용은 필수입니다.' });
-      }
-
-      const updatedProject = await Project.findByUserIdAndProjectIdAndUpdate({
-        userId,
-        projectId,
-        toUpdate: { title, content }
-      });
-
-      if (updatedProject.userId !== userId._id) {
-        return res.status(403).json({ error: '수정 권한이 없습니다.' });
-      }
-
-      res.json(updatedProject);
-    } catch (error) {
-      next(error);
+    if (title === null || title === undefined || title === '') {
+      return res.status(400).json({ error: '프로젝트명은 필수입니다.' });
     }
+    if (content === null || content === undefined || content === '') {
+      return res.status(400).json({ error: '프로젝트명 내용은 필수입니다.' });
+    }
+
+    const updatedProject = await Project.findByUserIdAndProjectIdAndUpdate({
+      userId,
+      projectId,
+      toUpdate: { title, content }
+    });
+
+    if (updatedProject.userId !== userId._id) {
+      return res.status(403).json({ error: '수정 권한이 없습니다.' });
+    }
+
+    res.json(updatedProject);
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 projectRouter.delete(
-  '/:projectId',
+  '/:_id',
   authenticateUser,
   async function (req, res, next) {
     try {
-      const projectId = req.params.projectId;
+      const projectId = req.params._id;
       const userId = res.locals.user;
 
       const project = await Project.findByUserIdAndProjectIdAndDelete({

@@ -3,36 +3,20 @@ const projectSchema = require('../schemas/project');
 const ProjectModel = mongoose.model('Project', projectSchema);
 
 class Project {
-  static async create({ userId, projectId, title, content }) {
-    return await ProjectModel.create({
-      userId,
-      projectId,
-      title,
-      content
-    });
-  }
-
-  static async findById(projectId) {
-    return await ProjectModel.findOne({ projectId }).lean();
+  static async create({ userId, title, content }) {
+    return await ProjectModel.create({ userId, title, content });
   }
 
   static async findByUserId(userId) {
-    return await ProjectModel.find(userId).lean();
-  }
-
-  static async findByUserIdAndProjectIdAndDelete({ userId, projectId }) {
-    return await ProjectModel.findOneAndDelete({
-      userId,
-      projectId
-    }).lean();
+    return await ProjectModel.find({ userId: userId }).lean();
   }
 
   static async findByUserIdAndProjectIdAndUpdate({
     userId,
-    projectId,
+    projectId: _id,
     toUpdate
   }) {
-    const filter = { userId, projectId };
+    const filter = { userId, _id };
     const update = toUpdate;
     const option = { returnOriginal: false };
 
@@ -42,6 +26,13 @@ class Project {
       option
     ).lean();
     return updatedProject;
+  }
+
+  static async findByUserIdAndProjectIdAndDelete({ userId, projectId: _id }) {
+    return await ProjectModel.findOneAndDelete({
+      userId,
+      _id
+    }).lean();
   }
 }
 

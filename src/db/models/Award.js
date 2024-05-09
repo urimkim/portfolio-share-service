@@ -3,27 +3,20 @@ const awardSchema = require('../schemas/award');
 const AwardModel = mongoose.model('Award', awardSchema);
 
 class Award {
-  static async create({ userId, awardId, title, content }) {
-    return await AwardModel.create({ userId, awardId, title, content });
-  }
-
-  static async findById(awardId) {
-    return await AwardModel.findOne({ awardId }).lean();
+  static async create({ userId, title, content }) {
+    return await AwardModel.create({ userId, title, content });
   }
 
   static async findByUserId(userId) {
-    return await AwardModel.find(userId).lean();
+    return await AwardModel.find({ userId: userId }).lean();
   }
 
-  static async findByUserIdAndAwardIdAndDelete({ userId, awardId }) {
-    return await AwardModel.findOneAndDelete({
-      userId,
-      awardId
-    }).lean();
-  }
-
-  static async findByUserIdAndAwardIdAndUpdate({ userId, awardId, toUpdate }) {
-    const filter = { awardId, userId };
+  static async findByUserIdAndAwardIdAndUpdate({
+    userId,
+    awardId: _id,
+    toUpdate
+  }) {
+    const filter = { userId, _id };
     const update = toUpdate;
     const option = { returnOriginal: false };
 
@@ -33,6 +26,13 @@ class Award {
       option
     ).lean();
     return updatedAward;
+  }
+
+  static async findByUserIdAndAwardIdAndDelete({ userId, awardId: _id }) {
+    return await AwardModel.findOneAndDelete({
+      userId,
+      _id
+    }).lean();
   }
 }
 

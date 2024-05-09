@@ -1,6 +1,5 @@
 const { Router } = require('express');
 const { Education } = require('../db');
-const { v4: uuidv4 } = require('uuid');
 const authenticateUser = require('../middlewares/authenticateUser');
 
 const educationRouter = Router();
@@ -24,7 +23,6 @@ educationRouter.post('/', authenticateUser, async function (req, res, next) {
 
     const newEducation = await Education.create({
       userId,
-      educationId: uuidv4(),
       school,
       major,
       status
@@ -47,51 +45,47 @@ educationRouter.get('/', authenticateUser, async function (req, res, next) {
   }
 });
 
-educationRouter.put(
-  '/:educationId',
-  authenticateUser,
-  async function (req, res, next) {
-    try {
-      const educationId = req.params.educationId;
-      const { school, major, status } = req.body;
-      const userId = res.locals.user;
+educationRouter.put('/:_id', authenticateUser, async function (req, res, next) {
+  try {
+    const educationId = req.params._id;
+    const { school, major, status } = req.body;
+    const userId = res.locals.user;
 
-      if (school === null || school === undefined || school === '') {
-        return res.status(400).json({ error: '학교명은 필수입니다.' });
-      }
-
-      if (major === null || major === undefined || major === '') {
-        return res.status(400).json({ error: '전공명은 필수입니다.' });
-      }
-
-      if (status === null || status === undefined || status === '') {
-        return res.status(400).json({ error: '학력을 선택해주세요.' });
-      }
-
-      const updatedEducation =
-        await Education.findByUserIdAndEducationIdAndUpdate({
-          userId,
-          educationId,
-          toUpdate: { school, major, status }
-        });
-
-      if (updatedEducation.userId !== userId._id) {
-        return res.status(403).json({ error: '수정 권한이 없습니다.' });
-      }
-
-      res.json(updatedEducation);
-    } catch (error) {
-      next(error);
+    if (school === null || school === undefined || school === '') {
+      return res.status(400).json({ error: '학교명은 필수입니다.' });
     }
+
+    if (major === null || major === undefined || major === '') {
+      return res.status(400).json({ error: '전공명은 필수입니다.' });
+    }
+
+    if (status === null || status === undefined || status === '') {
+      return res.status(400).json({ error: '학력을 선택해주세요.' });
+    }
+
+    const updatedEducation =
+      await Education.findByUserIdAndEducationIdAndUpdate({
+        userId,
+        educationId,
+        toUpdate: { school, major, status }
+      });
+
+    if (updatedEducation.userId !== userId._id) {
+      return res.status(403).json({ error: '수정 권한이 없습니다.' });
+    }
+
+    res.json(updatedEducation);
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 educationRouter.delete(
-  '/:educationId',
+  '/:_id',
   authenticateUser,
   async function (req, res, next) {
     try {
-      const educationId = req.params.educationId;
+      const educationId = req.params._id;
       const userId = res.locals.user;
 
       const education = await Education.findByUserIdAndEducationIdAndDelete({

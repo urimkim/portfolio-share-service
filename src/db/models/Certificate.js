@@ -3,39 +3,20 @@ const certificateSchema = require('../schemas/certificate');
 const CertificateModel = mongoose.model('Certificate', certificateSchema);
 
 class Certificate {
-  static async create({ userId, certificateId, title, content }) {
-    return await CertificateModel.create({
-      userId,
-      certificateId,
-      title,
-      content
-    });
-  }
-
-  static async findById(certificateId) {
-    return await CertificateModel.findOne({ certificateId }).lean();
+  static async create({ userId, title, content }) {
+    return await CertificateModel.create({ userId, title, content });
   }
 
   static async findByUserId(userId) {
-    return await CertificateModel.find(userId).lean();
-  }
-
-  static async findByUserIdAndCertificateIdAndDelete({
-    userId,
-    certificateId
-  }) {
-    return await CertificateModel.findOneAndDelete({
-      userId,
-      certificateId
-    }).lean();
+    return await CertificateModel.find({ userId: userId }).lean();
   }
 
   static async findByUserIdAndCertificateIdAndUpdate({
     userId,
-    certificateId,
+    certificateId: _id,
     toUpdate
   }) {
-    const filter = { userId, certificateId };
+    const filter = { userId, _id };
     const update = toUpdate;
     const option = { returnOriginal: false };
 
@@ -45,6 +26,16 @@ class Certificate {
       option
     ).lean();
     return updatedCertificate;
+  }
+
+  static async findByUserIdAndCertificateIdAndDelete({
+    userId,
+    certificateId: _id
+  }) {
+    return await CertificateModel.findOneAndDelete({
+      userId,
+      _id
+    }).lean();
   }
 }
 
