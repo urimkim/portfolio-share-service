@@ -55,10 +55,6 @@ certificateRouter.put(
       }
 
       if (content === null || content === undefined || content === '') {
-        const error = new Error('자격증 내용은 필수입니다.');
-      }
-
-      if (content === null || content === undefined || content === '') {
         return res.status(400).json({ error: '자격증 내용은 필수입니다.' });
       }
 
