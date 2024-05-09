@@ -5,7 +5,6 @@ const userSchema = new Schema(
   {
     id: {
       type: String,
-      default: () => crypto.randomUUID(),
       required: true
     },
     name: {
