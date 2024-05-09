@@ -14,7 +14,7 @@ class Education {
     });
   }
   static async findById(educationId) {
-    return await EducationModel.findOne(educationId).lean();
+    return await EducationModel.findOne({ educationId }).lean();
   }
 
   static async findByUserId(userId) {
@@ -28,8 +28,8 @@ class Education {
     }).lean();
   }
 
-  static async update({ educationId, toUpdate }) {
-    const filter = { educationId };
+  static async update({ educationId, toUpdate, userId }) {
+    const filter = { educationId, userId };
     const update = toUpdate;
     const options = { returnOriginal: false };
 

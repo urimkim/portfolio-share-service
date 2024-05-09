@@ -88,11 +88,12 @@ educationRouter.put(
 
       const education = await Education.findById(educationId);
 
-      if (!education || education.userId !== userId) {
+      if (!education || education.userId !== userId._id) {
         return res.status(403).json({ message: '수정 권한이 없습니다.' });
       }
 
       const updatedEducation = await Education.update({
+        userId,
         educationId,
         toUpdate: { school, major, status }
       });

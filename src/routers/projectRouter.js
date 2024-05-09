@@ -71,11 +71,12 @@ projectRouter.put(
 
       const project = await Project.findById(projectId);
 
-      if (!project || project.userId !== userId) {
-        return res.status(403).json({ message: '수정 권한이 없습니다.' });
+      if (!project || project.userId !== userId._id) {
+        return res.status(403).json({ message: 'Forbidden' });
       }
 
       const updatedProject = await Project.update({
+        userId,
         projectId,
         toUpdate: { title, content }
       });

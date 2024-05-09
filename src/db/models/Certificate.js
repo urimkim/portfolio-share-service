@@ -14,7 +14,7 @@ class Certificate {
   }
 
   static async findById(certificateId) {
-    return await CertificateModel.findOne(certificateId).lean();
+    return await CertificateModel.findOne({ certificateId }).lean();
   }
 
   static async findByUserId(userId) {
@@ -31,8 +31,8 @@ class Certificate {
     }).lean();
   }
 
-  static async update({ certificateId, toUpdate }) {
-    const filter = { id: certificateId };
+  static async update({ certificateId, toUpdate, userId }) {
+    const filter = { certificateId, userId };
     const update = toUpdate;
     const option = { returnOriginal: false };
 
