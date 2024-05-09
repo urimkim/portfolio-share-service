@@ -9,7 +9,6 @@ awardRouter.post('/', authenticateUser, async function (req, res, next) {
   try {
     const userId = res.locals.user;
     const { title, content } = req.body;
-    const userId = res.locals.user;
 
     if (title === null || title === undefined || title === '') {
       return res.status(400).json({ error: '수상명은 필수입니다.' });
