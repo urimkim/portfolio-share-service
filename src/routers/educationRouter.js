@@ -69,11 +69,11 @@ educationRouter.put(
       }
 
       const updatedEducation =
-        await Education.findByUserIdAndEducationIdAndUpdate({
-          userId,
-          educationId,
-          toUpdate: { school, major, status }
-        });
+      await Education.findByUserIdAndEducationIdAndUpdate({
+        userId,
+        educationId,
+        toUpdate: { school, major, status }
+      });
 
       if (updatedEducation.userId !== userId._id) {
         return res.status(403).json({ error: '수정 권한이 없습니다.' });

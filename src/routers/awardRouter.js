@@ -42,10 +42,10 @@ awardRouter.get('/', authenticateUser, async function (req, res, next) {
 });
 
 awardRouter.put('/:awardId', authenticateUser, async function (req, res, next) {
-  try {
-    const awardId = req.params.awardId;
-    const { title, content } = req.body;
-    const userId = res.locals.user;
+    try {
+      const awardId = req.params.awardId;
+      const { title, content } = req.body;
+      const userId = res.locals.user;
 
     if (title === null || title === undefined || title === '') {
       return res.status(400).json({ error: '수상명은 필수입니다.' });
