@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const educationSchema = require('../schemas/education');
-
 const EducationModel = mongoose.model('Education', educationSchema);
 
 class Education {
@@ -28,8 +27,12 @@ class Education {
     }).lean();
   }
 
-  static async update({ educationId, toUpdate, userId }) {
-    const filter = { educationId, userId };
+  static async findByUserIdAndEducationIdAndUpdate({
+    userId,
+    educationId,
+    toUpdate
+  }) {
+    const filter = { userId, educationId };
     const update = toUpdate;
     const options = { returnOriginal: false };
 

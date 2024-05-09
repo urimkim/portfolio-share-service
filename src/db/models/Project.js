@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
 const projectSchema = require('../schemas/project');
-
-const ProjectModel = mongoose.model('Project', projectSchema);
+const ProjectModel = model('Project', projectSchema);
 
 class Project {
   static async create({ userId, projectId, title, content }) {
-    return await ProjectModel.create({ userId, projectId, title, content });
+    return await ProjectModel.create({
+      userId,
+      projectId,
+      title,
+      content
+    });
   }
 
   static async findById(projectId) {
@@ -23,8 +27,12 @@ class Project {
     }).lean();
   }
 
-  static async update({ projectId, toUpdate, userId }) {
-    const filter = { projectId, userId };
+  static async findByUserIdAndProjectIdAndUpdate({
+    userId,
+    projectId,
+    toUpdate
+  }) {
+    const filter = { userId, projectId };
     const update = toUpdate;
     const option = { returnOriginal: false };
 
