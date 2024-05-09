@@ -11,16 +11,11 @@ certificateRouter.post('/', authenticateUser, async function (req, res, next) {
     const userId = res.locals.user;
 
     if (title === null || title === undefined || title === '') {
-      const error = new Error('자격증명은 필수입니다.');
-      error.name = 'Insufficient Certificate Info';
-      error.statusCode = 400;
-      throw error;
+      return res.status(400).json({ error: '자격증명은 필수입니다.' });
     }
+
     if (content === null || content === undefined || content === '') {
-      const error = new Error('자격증 내용은 필수입니다.');
-      error.name = 'Insufficient Certificate Info';
-      error.statusCode = 400;
-      throw error;
+      return res.status(400).json({ error: '자격증 내용은 필수입니다.' });
     }
 
     const newCertificate = await Certificate.create({
@@ -56,30 +51,27 @@ certificateRouter.put(
       const userId = res.locals.user;
 
       if (title === null || title === undefined || title === '') {
-        const error = new Error('자격증명은 필수입니다.');
-        error.name = 'Insufficient Certificate Info';
-        error.statusCode = 400;
-        throw error;
+        return res.status(400).json({ error: '자격증명은 필수입니다.' });
       }
+
       if (content === null || content === undefined || content === '') {
         const error = new Error('자격증 내용은 필수입니다.');
-        error.name = 'Insufficient Certificate Info';
-        error.statusCode = 400;
-        throw error;
       }
 
-      // TODO: DELETE랑 비슷하게 findByUserIdAndCertificateIdAndUpdate로 수정해보자
-      // 그러면 DB에서 한번만 조회하게 됨
-      const certificate = await Certificate.findById(certificateId);
-
-      if (!certificate || certificate.userId !== userId) {
-        return res.status(403).json({ message: '수정 권한이 없습니다.' });
+      if (content === null || content === undefined || content === '') {
+        return res.status(400).json({ error: '자격증 내용은 필수입니다.' });
       }
 
-      const updatedCertificate = await Certificate.update({
-        certificateId,
-        toUpdate: { title, content }
-      });
+      const updatedCertificate =
+        await Certificate.findByUserIdAndCertificateIdAndUpdate({
+          userId,
+          certificateId,
+          toUpdate: { title, content }
+        });
+
+      if (updatedCertificate.userId !== userId._id) {
+        return res.status(403).json({ error: '수정 권한이 없습니다.' });
+      }
 
       res.json(updatedCertificate);
     } catch (error) {
@@ -102,8 +94,8 @@ certificateRouter.delete(
           certificateId
         });
 
-      if (certificate === null) {
-        return res.status(403).json({ message: '삭제 권한이 없습니다.' });
+      if (certificate === null || certificate.userId !== userId._id) {
+        return res.status(403).json({ error: '삭제 권한이 없습니다.' });
       }
 
       res

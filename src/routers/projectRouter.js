@@ -11,16 +11,10 @@ projectRouter.post('/', authenticateUser, async function (req, res, next) {
     const userId = res.locals.user;
 
     if (title === null || title === undefined || title === '') {
-      const error = new Error('프로젝트명은 필수입니다.');
-      error.name = 'Insufficient Project Info';
-      error.statusCode = 400;
-      throw error;
+      return res.status(400).json({ error: '프로젝트명은 필수입니다.' });
     }
     if (content === null || content === undefined || content === '') {
-      const error = new Error('프로젝트 내용은 필수입니다.');
-      error.name = 'Insufficient Project Info';
-      error.statusCode = 400;
-      throw error;
+      return res.status(400).json({ error: '프로젝트 내용은 필수입니다.' });
     }
 
     const newProject = await Project.create({
@@ -29,7 +23,7 @@ projectRouter.post('/', authenticateUser, async function (req, res, next) {
       title,
       content
     });
-    console.log(userId);
+
     res.status(201).json(newProject);
   } catch (error) {
     next(error);
@@ -57,28 +51,21 @@ projectRouter.put(
       const userId = res.locals.user;
 
       if (title === null || title === undefined || title === '') {
-        const error = new Error('프로젝트명은 필수입니다.');
-        error.name = 'Insufficient Project Info';
-        error.statusCode = 400;
-        throw error;
+        return res.status(400).json({ error: '프로젝트명은 필수입니다.' });
       }
       if (content === null || content === undefined || content === '') {
-        const error = new Error('프로젝트 내용은 필수입니다.');
-        error.name = 'Insufficient Project Info';
-        error.statusCode = 400;
-        throw error;
+        return res.status(400).json({ error: '프로젝트명 내용은 필수입니다.' });
       }
 
-      const project = await Project.findById(projectId);
-
-      if (!project || project.userId !== userId) {
-        return res.status(403).json({ message: '수정 권한이 없습니다.' });
-      }
-
-      const updatedProject = await Project.update({
+      const updatedProject = await Project.findByUserIdAndProjectIdAndUpdate({
+        userId,
         projectId,
         toUpdate: { title, content }
       });
+
+      if (updatedProject.userId !== userId._id) {
+        return res.status(403).json({ error: '수정 권한이 없습니다.' });
+      }
 
       res.json(updatedProject);
     } catch (error) {
@@ -100,8 +87,8 @@ projectRouter.delete(
         projectId
       });
 
-      if (!project || project.userId !== userId) {
-        return res.status(403).json({ message: '삭제 권한이 없습니다.' });
+      if (project === null || project.userId !== userId._id) {
+        return res.status(403).json({ error: '삭제 권한이 없습니다.' });
       }
 
       res

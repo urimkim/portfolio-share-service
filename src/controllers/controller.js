@@ -129,10 +129,10 @@ const user = async (req, res, next) => {
     }
 
     const [awards, certificates, education, projects] = await Promise.all([
-      Award.findByUserId({userId}),
-      Certificate.findByUserId({userId}),
-      Education.findByUserId({userId}),
-      Project.findByUserId({userId})
+      Award.findByUserId({ userId }),
+      Certificate.findByUserId({ userId }),
+      Education.findByUserId({ userId }),
+      Project.findByUserId({ userId })
     ]);
 
     res.status(200).json({

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const awardSchema = require('../schemas/award');
-
 const AwardModel = mongoose.model('Award', awardSchema);
 
 class Award {
@@ -9,7 +8,7 @@ class Award {
   }
 
   static async findById(awardId) {
-    return await AwardModel.findOne(awardId).lean();
+    return await AwardModel.findOne({ awardId }).lean();
   }
 
   static async findByUserId(userId) {
@@ -23,8 +22,8 @@ class Award {
     }).lean();
   }
 
-  static async update({ awardId, toUpdate }) {
-    const filter = { awardId };
+  static async findByUserIdAndAwardIdAndUpdate({ userId, awardId, toUpdate }) {
+    const filter = { awardId, userId };
     const update = toUpdate;
     const option = { returnOriginal: false };
 

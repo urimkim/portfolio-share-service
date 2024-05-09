@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const certificateSchema = require('../schemas/certificate');
-
 const CertificateModel = mongoose.model('Certificate', certificateSchema);
 
 class Certificate {
@@ -14,7 +13,7 @@ class Certificate {
   }
 
   static async findById(certificateId) {
-    return await CertificateModel.findOne(certificateId).lean();
+    return await CertificateModel.findOne({ certificateId }).lean();
   }
 
   static async findByUserId(userId) {
@@ -31,8 +30,12 @@ class Certificate {
     }).lean();
   }
 
-  static async update({ certificateId, toUpdate }) {
-    const filter = { id: certificateId };
+  static async findByUserIdAndCertificateIdAndUpdate({
+    userId,
+    certificateId,
+    toUpdate
+  }) {
+    const filter = { userId, certificateId };
     const update = toUpdate;
     const option = { returnOriginal: false };
 
