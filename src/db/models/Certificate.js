@@ -8,7 +8,7 @@ class Certificate {
       userId,
       certificateId,
       title,
-      content
+      content,
     });
   }
 
@@ -17,23 +17,23 @@ class Certificate {
   }
 
   static async findByUserId(userId) {
-    return await CertificateModel.find({ userId }).lean();
+    return await CertificateModel.find(userId).lean();
   }
 
   static async findByUserIdAndCertificateIdAndDelete({
     userId,
-    certificateId
+    certificateId,
   }) {
     return await CertificateModel.findOneAndDelete({
       userId,
-      certificateId
+      certificateId,
     }).lean();
   }
 
   static async findByUserIdAndCertificateIdAndUpdate({
     userId,
     certificateId,
-    toUpdate
+    toUpdate,
   }) {
     const filter = { userId, certificateId };
     const update = toUpdate;

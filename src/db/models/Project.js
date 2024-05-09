@@ -8,7 +8,7 @@ class Project {
       userId,
       projectId,
       title,
-      content
+      content,
     });
   }
 
@@ -17,20 +17,20 @@ class Project {
   }
 
   static async findByUserId(userId) {
-    return await ProjectModel.find({ userId }).lean();
+    return await ProjectModel.find(userId).lean();
   }
 
   static async findByUserIdAndProjectIdAndDelete({ userId, projectId }) {
     return await ProjectModel.findOneAndDelete({
       userId,
-      projectId
+      projectId,
     }).lean();
   }
 
   static async findByUserIdAndProjectIdAndUpdate({
     userId,
     projectId,
-    toUpdate
+    toUpdate,
   }) {
     const filter = { userId, projectId };
     const update = toUpdate;

@@ -12,13 +12,13 @@ class Award {
   }
 
   static async findByUserId(userId) {
-    return await AwardModel.find({ userId }).lean();
+    return await AwardModel.find(userId).lean();
   }
 
   static async findByUserIdAndAwardIdAndDelete({ userId, awardId }) {
     return await AwardModel.findOneAndDelete({
       userId,
-      awardId
+      awardId,
     }).lean();
   }
 

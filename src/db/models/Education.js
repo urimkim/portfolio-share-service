@@ -9,7 +9,7 @@ class Education {
       educationId,
       school,
       major,
-      status
+      status,
     });
   }
   static async findById(educationId) {
@@ -17,20 +17,20 @@ class Education {
   }
 
   static async findByUserId(userId) {
-    return await EducationModel.find({ userId }).lean();
+    return await EducationModel.find(userId).lean();
   }
 
   static async findByUserIdAndEducationIdAndDelete({ userId, educationId }) {
     return await EducationModel.findOneAndDelete({
       userId,
-      educationId
+      educationId,
     }).lean();
   }
 
   static async findByUserIdAndEducationIdAndUpdate({
     userId,
     educationId,
-    toUpdate
+    toUpdate,
   }) {
     const filter = { userId, educationId };
     const update = toUpdate;
