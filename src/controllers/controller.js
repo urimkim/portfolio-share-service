@@ -92,7 +92,17 @@ const pagesOrAllUsers = async (req, res, next) => {
       if (members.length === 0) {
         return res.status(400).json({ error: '사용자가 없습니다' });
       }
-      return res.status(200).json({ members });
+
+      const allMember = members.map(user => ({
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+        description: user.description
+      }));
+
+      return res.status(200).json({ 
+        allMember 
+      });
     }
 
     const page = parseInt(req.query.page);
@@ -110,8 +120,15 @@ const pagesOrAllUsers = async (req, res, next) => {
     const skip = (page - 1) * limit;
     const users = await Member.find({}).skip(skip).limit(limit).lean();
 
+    const userData = users.map(user => ({
+      userId: user._id,
+      name: user.name,
+      email: user.email,
+      description: user.description
+    }));
+
     res.status(200).json({
-      users
+      userData
     });
   } catch (error) {
     next(error);
@@ -136,7 +153,10 @@ const user = async (req, res, next) => {
     ]);
 
     res.status(200).json({
-      user,
+      userId: user._id,
+      name: user.name,
+      email: user.email,
+      description: user.description,
       awards,
       certificates,
       education,
