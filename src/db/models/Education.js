@@ -8,7 +8,7 @@ class Education {
   }
 
   static async findByUserId(userId) {
-    return await EducationModel.find({ userId: userId }).lean();
+    return await EducationModel.find(userId).lean();
   }
 
   static async findByUserIdAndEducationIdAndUpdate({

@@ -8,7 +8,7 @@ class Certificate {
   }
 
   static async findByUserId(userId) {
-    return await CertificateModel.find({ userId: userId }).lean();
+    return await CertificateModel.find(userId).lean();
   }
 
   static async findByUserIdAndCertificateIdAndUpdate({

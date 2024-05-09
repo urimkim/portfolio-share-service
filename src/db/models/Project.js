@@ -8,7 +8,7 @@ class Project {
   }
 
   static async findByUserId(userId) {
-    return await ProjectModel.find({ userId: userId }).lean();
+    return await ProjectModel.find(userId).lean();
   }
 
   static async findByUserIdAndProjectIdAndUpdate({

@@ -8,7 +8,7 @@ class Award {
   }
 
   static async findByUserId(userId) {
-    return await AwardModel.find({ userId: userId }).lean();
+    return await AwardModel.find(userId).lean();
   }
 
   static async findByUserIdAndAwardIdAndUpdate({
