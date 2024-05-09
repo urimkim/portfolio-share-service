@@ -1,31 +1,32 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const authRouter = require("./routers/authRouter");
-const userRouter = require("./routers/userRouter");
+const express = require('express');
+const cors = require('cors');
+const authRouter = require('./routers/authRouter');
+const userRouter = require('./routers/userRouter');
+const awardRouter = require('./routers/awardRouter');
+const certificateRouter = require('./routers/certificateRouter');
+const projectRouter = require('./routers/projectRouter');
+const errorMiddleware = require('./middlewares/errorMiddleware');
+const educationRouter = require('./routers/educationRouter');
+const config = require('./config');
+
 const app = express();
-const config = require("./config/index");
+
+// middlewares
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// router
+app.use('/api/auth', authRouter);
+app.use('/api/users', userRouter);
+app.use('/api/my-info/awards', awardRouter);
+app.use('/api/my-info/certificates', certificateRouter);
+app.use('/api/my-info/projects', projectRouter);
+app.use('/api/my-info/educations', educationRouter);
+
+app.use(errorMiddleware);
 
 // server
 app.listen(config.port, () => {
   console.log(`${config.applicationName} Server on ${config.port}`);
 });
-
-// middlewares
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// router
-app.use("/api/auth", authRouter);
-app.use("/api/users", userRouter);
-
-// mongodb
-mongoose
-  .connect(config.mongoDBURI)
-  .then(() => {
-    console.log("DB 연결 성공");
-  })
-  .catch(() => {
-    console.log("DB 연결 실패");
-  });
