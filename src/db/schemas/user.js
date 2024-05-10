@@ -1,12 +1,7 @@
-const crypto = require('node:crypto');
 const { Schema } = require('mongoose');
 
 const userSchema = new Schema(
   {
-    id: {
-      type: String,
-      required: true
-    },
     name: {
       type: String,
       required: true
