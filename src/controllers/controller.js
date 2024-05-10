@@ -88,7 +88,7 @@ const pagesOrAllUsers = async (req, res, next) => {
     const allUsers = req.query.all === 'true';
 
     if (allUsers) {
-      const members = await Member.find({}).lean();
+      const members = await Member.find({}).sort({ createdAt: -1 }).lean();
       if (members.length === 0) {
         return res.status(400).json({ error: '사용자가 없습니다' });
       }
@@ -118,7 +118,11 @@ const pagesOrAllUsers = async (req, res, next) => {
     }
 
     const skip = (page - 1) * limit;
-    const users = await Member.find({}).skip(skip).limit(limit).lean();
+    const users = await Member.find({})
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
 
     const userData = users.map(user => ({
       userId: user._id,
