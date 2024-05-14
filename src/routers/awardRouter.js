@@ -6,7 +6,7 @@ const awardRouter = Router();
 
 awardRouter.post('/', authenticateUser, async function (req, res, next) {
   try {
-    const userId = res.locals.user;
+    const { _id } = res.locals.user;
     const { title, content } = req.body;
 
     if (title === null || title === undefined || title === '') {
@@ -18,7 +18,7 @@ awardRouter.post('/', authenticateUser, async function (req, res, next) {
     }
 
     const newAward = await Award.create({
-      userId,
+      userId: _id,
       title,
       content
     });
@@ -30,8 +30,8 @@ awardRouter.post('/', authenticateUser, async function (req, res, next) {
 
 awardRouter.get('/', authenticateUser, async function (req, res, next) {
   try {
-    const userId = res.locals.user;
-    const awards = await Award.findByUserId(userId);
+    const { _id } = res.locals.user;
+    const awards = await Award.findByUserId(_id);
 
     res.json(awards);
   } catch (error) {
@@ -43,7 +43,7 @@ awardRouter.put('/:_id', authenticateUser, async function (req, res, next) {
   try {
     const awardId = req.params._id;
     const { title, content } = req.body;
-    const userId = res.locals.user;
+    const { _id } = res.locals.user;
 
     if (title === null || title === undefined || title === '') {
       return res.status(400).json({ error: '수상명은 필수입니다.' });
@@ -53,13 +53,13 @@ awardRouter.put('/:_id', authenticateUser, async function (req, res, next) {
       return res.status(400).json({ error: '수상 내용은 필수입니다.' });
     }
 
-    const updatedAward = await Award.findByUserIdAndAwardIdAndUpdate({
-      userId,
+    const updatedAward = await Award.findByUserIdAndAwardIdAndUpdate(
+      _id,
       awardId,
-      toUpdate: { title, content }
-    });
+      { title, content }
+    );
 
-    if (updatedAward.userId !== userId._id) {
+    if (updatedAward.userId !== _id) {
       return res.status(403).json({ error: '수정 권한이 없습니다.' });
     }
 
@@ -72,14 +72,14 @@ awardRouter.put('/:_id', authenticateUser, async function (req, res, next) {
 awardRouter.delete('/:_id', authenticateUser, async function (req, res, next) {
   try {
     const awardId = req.params._id;
-    const userId = res.locals.user;
+    const { _id } = res.locals.user;
 
-    const award = await Award.findByUserIdAndAwardIdAndDelete({
-      userId,
+    const award = await Award.findByUserIdAndAwardIdAndDelete(
+      _id,
       awardId
-    });
+    );
 
-    if (award === null || award.userId !== userId._id) {
+    if (award === null || award.userId !== _id) {
       return res.status(403).json({ error: '삭제 권한이 없습니다.' });
     }
 

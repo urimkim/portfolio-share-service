@@ -8,15 +8,15 @@ class Award {
   }
 
   static async findByUserId(userId) {
-    return await AwardModel.find(userId).lean();
+    return await AwardModel.find({ userId }).lean();
   }
 
-  static async findByUserIdAndAwardIdAndUpdate({
+  static async findByUserIdAndAwardIdAndUpdate(
     userId,
-    awardId: _id,
+    awardId,
     toUpdate
-  }) {
-    const filter = { userId, _id };
+  ) {
+    const filter = { userId, _id: awardId };
     const update = toUpdate;
     const option = { returnOriginal: false };
 
@@ -28,10 +28,10 @@ class Award {
     return updatedAward;
   }
 
-  static async findByUserIdAndAwardIdAndDelete({ userId, awardId: _id }) {
+  static async findByUserIdAndAwardIdAndDelete(userId, awardId) {
     return await AwardModel.findOneAndDelete({
       userId,
-      _id
+      _id: awardId,
     }).lean();
   }
 }

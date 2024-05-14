@@ -8,15 +8,15 @@ class Education {
   }
 
   static async findByUserId(userId) {
-    return await EducationModel.find(userId).lean();
+    return await EducationModel.find({ userId }).lean();
   }
 
-  static async findByUserIdAndEducationIdAndUpdate({
+  static async findByUserIdAndEducationIdAndUpdate(
     userId,
-    educationId: _id,
+    educationId,
     toUpdate
-  }) {
-    const filter = { userId, _id };
+  ) {
+    const filter = { userId, _id: educationId };
     const update = toUpdate;
     const options = { returnOriginal: false };
 
@@ -28,13 +28,13 @@ class Education {
     return updatedEducation;
   }
 
-  static async findByUserIdAndEducationIdAndDelete({
+  static async findByUserIdAndEducationIdAndDelete(
     userId,
-    educationId: _id
-  }) {
+    educationId
+  ) {
     return await EducationModel.findOneAndDelete({
       userId,
-      _id
+      _id: educationId
     }).lean();
   }
 }

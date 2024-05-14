@@ -8,15 +8,15 @@ class Project {
   }
 
   static async findByUserId(userId) {
-    return await ProjectModel.find(userId).lean();
+    return await ProjectModel.find({ userId }).lean();
   }
 
-  static async findByUserIdAndProjectIdAndUpdate({
+  static async findByUserIdAndProjectIdAndUpdate(
     userId,
-    projectId: _id,
+    projectId,
     toUpdate
-  }) {
-    const filter = { userId, _id };
+  ) {
+    const filter = { userId, _id: projectId };
     const update = toUpdate;
     const option = { returnOriginal: false };
 
@@ -28,10 +28,10 @@ class Project {
     return updatedProject;
   }
 
-  static async findByUserIdAndProjectIdAndDelete({ userId, projectId: _id }) {
+  static async findByUserIdAndProjectIdAndDelete(userId, projectId) {
     return await ProjectModel.findOneAndDelete({
       userId,
-      _id
+      _id: projectId,
     }).lean();
   }
 }

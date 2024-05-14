@@ -7,7 +7,7 @@ const educationRouter = Router();
 educationRouter.post('/', authenticateUser, async function (req, res, next) {
   try {
     const { school, major, status } = req.body;
-    const userId = res.locals.user;
+    const { _id } = res.locals.user;
 
     if (school === null || school === undefined || school === '') {
       return res.status(400).json({ error: '학교명은 필수입니다.' });
@@ -22,7 +22,7 @@ educationRouter.post('/', authenticateUser, async function (req, res, next) {
     }
 
     const newEducation = await Education.create({
-      userId,
+      userId: _id,
       school,
       major,
       status
@@ -36,8 +36,8 @@ educationRouter.post('/', authenticateUser, async function (req, res, next) {
 
 educationRouter.get('/', authenticateUser, async function (req, res, next) {
   try {
-    const userId = res.locals.user;
-    const educations = await Education.findByUserId(userId);
+    const { _id } = res.locals.user;
+    const educations = await Education.findByUserId(_id);
 
     res.json(educations);
   } catch (error) {
@@ -49,14 +49,17 @@ educationRouter.put('/:_id', authenticateUser, async function (req, res, next) {
   try {
     const educationId = req.params._id;
     const { school, major, status } = req.body;
-    const userId = res.locals.user;
+    const { _id } = res.locals.user;
 
     if (school === null || school === undefined || school === '') {
       return res.status(400).json({ error: '학교명은 필수입니다.' });
     }
 
     if (major === null || major === undefined || major === '') {
-      return res.status(400).json({ error: '전공명은 필수입니다.' });
+      // return res.status(400).json({ error: '전공명은 필수입니다.' });
+      const error = new Error("전공명은 필수입니다.");
+      error.statusCode = 400;
+      throw error;
     }
 
     if (status === null || status === undefined || status === '') {
@@ -64,13 +67,13 @@ educationRouter.put('/:_id', authenticateUser, async function (req, res, next) {
     }
 
     const updatedEducation =
-      await Education.findByUserIdAndEducationIdAndUpdate({
-        userId,
+      await Education.findByUserIdAndEducationIdAndUpdate(
+        _id,
         educationId,
-        toUpdate: { school, major, status }
-      });
+        { school, major, status }
+      );
 
-    if (updatedEducation.userId !== userId._id) {
+    if (updatedEducation.userId !== _id) {
       return res.status(403).json({ error: '수정 권한이 없습니다.' });
     }
 
@@ -86,14 +89,14 @@ educationRouter.delete(
   async function (req, res, next) {
     try {
       const educationId = req.params._id;
-      const userId = res.locals.user;
+      const { _id } = res.locals.user;
 
-      const education = await Education.findByUserIdAndEducationIdAndDelete({
-        userId,
+      const education = await Education.findByUserIdAndEducationIdAndDelete(
+        _id,
         educationId
-      });
+      );
 
-      if (education === null || education.userId !== userId._id) {
+      if (education === null || education.userId !== _id) {
         return res.status(403).json({ error: '삭제 권한이 없습니다.' });
       }
 

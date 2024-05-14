@@ -6,7 +6,7 @@ const certificateRouter = Router();
 
 certificateRouter.post('/', authenticateUser, async function (req, res, next) {
   try {
-    const userId = res.locals.user;
+    const { _id } = res.locals.user;
     const { title, content } = req.body;
 
     if (title === null || title === undefined || title === '') {
@@ -18,7 +18,7 @@ certificateRouter.post('/', authenticateUser, async function (req, res, next) {
     }
 
     const newCertificate = await Certificate.create({
-      userId,
+      userId: _id,
       title,
       content
     });
@@ -30,8 +30,8 @@ certificateRouter.post('/', authenticateUser, async function (req, res, next) {
 
 certificateRouter.get('/', authenticateUser, async function (req, res, next) {
   try {
-    const userId = res.locals.user;
-    const certificates = await Certificate.findByUserId(userId);
+    const { _id } = res.locals.user;
+    const certificates = await Certificate.findByUserId(_id);
 
     res.json(certificates);
   } catch (error) {
@@ -46,7 +46,7 @@ certificateRouter.put(
     try {
       const certificateId = req.params._id;
       const { title, content } = req.body;
-      const userId = res.locals.user;
+      const { _id } = res.locals.user;
 
       if (title === null || title === undefined || title === '') {
         return res.status(400).json({ error: '자격증명은 필수입니다.' });
@@ -57,13 +57,13 @@ certificateRouter.put(
       }
 
       const updatedCertificate =
-        await Certificate.findByUserIdAndCertificateIdAndUpdate({
-          userId,
+        await Certificate.findByUserIdAndCertificateIdAndUpdate(
+          _id,
           certificateId,
-          toUpdate: { title, content }
-        });
+          { title, content }
+        );
 
-      if (updatedCertificate.userId !== userId._id) {
+      if (updatedCertificate.userId !== _id) {
         return res.status(403).json({ error: '수정 권한이 없습니다.' });
       }
 
@@ -80,15 +80,15 @@ certificateRouter.delete(
   async function (req, res, next) {
     try {
       const certificateId = req.params._id;
-      const userId = res.locals.user;
+      const { _id } = res.locals.user;
 
       const certificate =
-        await Certificate.findByUserIdAndCertificateIdAndDelete({
-          userId,
+        await Certificate.findByUserIdAndCertificateIdAndDelete(
+          _id,
           certificateId
-        });
+        );
 
-      if (certificate === null || certificate.userId !== userId._id) {
+      if (certificate === null || certificate.userId !== _id) {
         return res.status(403).json({ error: '삭제 권한이 없습니다.' });
       }
 

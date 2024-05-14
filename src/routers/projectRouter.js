@@ -7,7 +7,7 @@ const projectRouter = Router();
 projectRouter.post('/', authenticateUser, async function (req, res, next) {
   try {
     const { title, content } = req.body;
-    const userId = res.locals.user;
+    const { _id } = res.locals.user;
 
     if (title === null || title === undefined || title === '') {
       return res.status(400).json({ error: '프로젝트명은 필수입니다.' });
@@ -17,7 +17,7 @@ projectRouter.post('/', authenticateUser, async function (req, res, next) {
     }
 
     const newProject = await Project.create({
-      userId,
+      userId: _id,
       title,
       content
     });
@@ -30,8 +30,8 @@ projectRouter.post('/', authenticateUser, async function (req, res, next) {
 
 projectRouter.get('/', authenticateUser, async function (req, res, next) {
   try {
-    const userId = res.locals.user;
-    const projects = await Project.findByUserId(userId);
+    const { _id } = res.locals.user;
+    const projects = await Project.findByUserId(_id);
 
     res.json(projects);
   } catch (error) {
@@ -43,7 +43,7 @@ projectRouter.put('/:_id', authenticateUser, async function (req, res, next) {
   try {
     const projectId = req.params._id;
     const { title, content } = req.body;
-    const userId = res.locals.user;
+    const { _id } = res.locals.user;
 
     if (title === null || title === undefined || title === '') {
       return res.status(400).json({ error: '프로젝트명은 필수입니다.' });
@@ -52,13 +52,13 @@ projectRouter.put('/:_id', authenticateUser, async function (req, res, next) {
       return res.status(400).json({ error: '프로젝트명 내용은 필수입니다.' });
     }
 
-    const updatedProject = await Project.findByUserIdAndProjectIdAndUpdate({
-      userId,
+    const updatedProject = await Project.findByUserIdAndProjectIdAndUpdate(
+      _id,
       projectId,
-      toUpdate: { title, content }
-    });
+      { title, content }
+    );
 
-    if (updatedProject.userId !== userId._id) {
+    if (updatedProject.userId !== _id) {
       return res.status(403).json({ error: '수정 권한이 없습니다.' });
     }
 
@@ -74,14 +74,14 @@ projectRouter.delete(
   async function (req, res, next) {
     try {
       const projectId = req.params._id;
-      const userId = res.locals.user;
+      const { _id } = res.locals.user;
 
-      const project = await Project.findByUserIdAndProjectIdAndDelete({
-        userId,
+      const project = await Project.findByUserIdAndProjectIdAndDelete(
+        _id,
         projectId
-      });
+      );
 
-      if (project === null || project.userId !== userId._id) {
+      if (project === null || project.userId !== _id) {
         return res.status(403).json({ error: '삭제 권한이 없습니다.' });
       }
 
